@@ -15,13 +15,13 @@ function rand(seed: number) {
 }
 
 export const HOLDS: Hold[] = Array.from({ length: 46 }, (_, i) => {
-  const y = 140 + (i / 46) * (CLIMB_HEIGHT - 200) + rand(i + 3) * 60;
+  const r = (n: number, d = 2) => Math.round(n * 10 ** d) / 10 ** d;
   return {
     id: i,
-    x: 0.12 + rand(i + 1) * 0.76,
-    y,
-    size: 34 + rand(i + 2) * 46,
-    rot: rand(i + 7) * 360,
+    x: r(0.12 + rand(i + 1) * 0.76, 4),
+    y: r(140 + (i / 46) * (CLIMB_HEIGHT - 200) + rand(i + 3) * 60),
+    size: r(34 + rand(i + 2) * 46),
+    rot: r(rand(i + 7) * 360),
   };
 });
 
