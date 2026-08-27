@@ -36,10 +36,8 @@ function Index() {
     let raf = 0;
     const tick = () => {
       if (!grip.current) {
-        vel.current *= 0.9; // friction
-        vel.current -= 0.35; // gravity
-        if (climbRef.current <= 0 && vel.current < 0) vel.current = 0;
-        set(climbRef.current + vel.current);
+        vel.current *= 0.92; // friction slows the swing after a pull
+        if (Math.abs(vel.current) > 0.2) set(climbRef.current + vel.current);
       }
       raf = requestAnimationFrame(tick);
     };

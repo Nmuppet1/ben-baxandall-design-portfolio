@@ -19,7 +19,7 @@ export const HOLDS: Hold[] = Array.from({ length: 46 }, (_, i) => {
   return {
     id: i,
     x: r(0.12 + rand(i + 1) * 0.76, 4),
-    y: r(140 + (i / 46) * (CLIMB_HEIGHT - 200) + rand(i + 3) * 60),
+    y: r(560 + (i / 46) * (CLIMB_HEIGHT - 200) + rand(i + 3) * 60),
     size: r(34 + rand(i + 2) * 46),
     rot: r(rand(i + 7) * 360),
   };
