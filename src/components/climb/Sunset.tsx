@@ -27,7 +27,7 @@ export function Sunset({ t }: { t: number }) {
         style={{
           width: "38vmin",
           height: "38vmin",
-          bottom: `${8 + a * 24}vmin`,
+          bottom: `${40 + a * 24}vmin`,
           transform: "translateX(-50%)",
           background:
             "radial-gradient(circle, var(--warm) 0%, oklch(0.72 0.18 55) 55%, oklch(0.55 0.16 40 / 0%) 72%)",
@@ -38,7 +38,7 @@ export function Sunset({ t }: { t: number }) {
 
       {/* jagged mountains */}
       <svg
-        className="absolute inset-x-0 bottom-[10vh] h-[46vh] w-full"
+        className="absolute inset-x-0 bottom-[40vh] h-[46vh] w-full"
         viewBox="0 0 100 40"
         preserveAspectRatio="none"
       >
