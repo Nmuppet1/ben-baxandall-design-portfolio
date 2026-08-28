@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Blind } from "@/components/climb/Blind";
+import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
+import { Sunset } from "@/components/climb/Sunset";
 import { CLIMB_HEIGHT, HOLDS, SECTIONS } from "@/components/climb/holds";
 
 export const Route = createFileRoute("/")({
@@ -9,14 +11,12 @@ export const Route = createFileRoute("/")({
       { title: "Ben — Design Portfolio" },
       {
         name: "description",
-        content:
-          " Pull on the holds to climb the page",
+        content: " Pull on the holds to climb the page",
       },
       { property: "og:title", content: "Ben — Design Portfolio" },
       {
         property: "og:description",
-        content:
-          "Climb to scroll!",
+        content: "Climb to scroll!",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -27,9 +27,12 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [climb, setClimb] = useState(0);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [puffs, setPuffs] = useState<Puff[]>([]);
   const climbRef = useRef(0);
   const vel = useRef(0);
   const grip = useRef<{ y: number; start: number } | null>(null);
+  const puffId = useRef(0);
 
   // physics loop: momentum + friction + a little gravity sag
   useEffect(() => {
@@ -53,10 +56,17 @@ function Index() {
     }
   };
 
-  const onGrab = (e: React.PointerEvent) => {
+  const onGrab = (e: React.PointerEvent, hold: (typeof HOLDS)[number]) => {
     (e.target as Element).setPointerCapture(e.pointerId);
     grip.current = { y: e.clientY, start: climbRef.current };
     vel.current = 0;
+
+    const id = ++puffId.current;
+    setPuffs((p) => [
+      ...p.slice(-8),
+      { id, left: `${hold.x * 100}%`, bottom: hold.y, seed: hold.rot },
+    ]);
+    setTimeout(() => setPuffs((p) => p.filter((x) => x.id !== id)), 1600);
   };
 
   const onPull = (e: React.PointerEvent) => {
@@ -71,6 +81,8 @@ function Index() {
   };
 
   const p = climb / (CLIMB_HEIGHT - 400);
+  const visible = SECTIONS.filter((s) => climb > s.at - 200);
+  const shown = openId ? visible.filter((s) => s.id === openId) : visible;
 
   return (
     <main
@@ -79,6 +91,19 @@ function Index() {
       onPointerCancel={release}
       className="relative h-screen w-full touch-none overflow-hidden bg-background text-foreground select-none"
     >
+      <Sunset t={p} />
+
+      {/* drifting haze for a bit of life */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-40"
+        style={{
+          background:
+            "radial-gradient(60% 40% at 50% 100%, oklch(0.2 0.02 60 / 45%), transparent 70%)",
+          animation: "haze 14s ease-in-out infinite",
+        }}
+        aria-hidden
+      />
+
       {/* the wall */}
       <div
         className="absolute inset-x-0 bottom-0"
@@ -89,58 +114,73 @@ function Index() {
       >
         {/* intro at the very bottom */}
         <div className="absolute inset-x-0 bottom-0 flex h-screen flex-col items-center justify-center gap-4 px-6 text-center">
-          <h1 className="text-5xl font-light tracking-tight md:text-7xl">Ben</h1>
-          <p className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase">
-            Enthusiast in design, engineering and climbing &amp;
+          <h1
+            className="text-5xl font-light tracking-tight md:text-7xl"
+            style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
+          >
+            Ben
+          </h1>
+          <p
+            className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase"
+            style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 140ms both" }}
+          >
+            Enthusiast in design, engineering and climbing &amp; brand
           </p>
-          <p className="mt-10 animate-pulse text-xs tracking-[0.3em] text-muted-foreground uppercase">
+          <p
+            className="mt-10 text-xs tracking-[0.3em] text-warm uppercase"
+            style={{ animation: "breathe 3s ease-in-out infinite" }}
+          >
             Grab a hold and pull to climb
           </p>
         </div>
+
+        {/* chalk left on grabbed holds */}
+        {puffs.map((puff) => (
+          <ChalkPuff key={puff.id} puff={puff} />
+        ))}
 
         {/* holds */}
         {HOLDS.map((h) => (
           <button
             key={h.id}
-            onPointerDown={onGrab}
+            onPointerDown={(e) => onGrab(e, h)}
             aria-label="Climbing hold"
-            className="absolute cursor-grab rounded-[45%] border border-border bg-card transition-[background-color,box-shadow] duration-200 hover:bg-accent active:cursor-grabbing"
+            className={`absolute cursor-grab transition-[filter,opacity] duration-300 hover:brightness-125 active:cursor-grabbing ${
+              h.warm ? "bg-warm/80" : "bg-card"
+            }`}
             style={{
               left: `${h.x * 100}%`,
               bottom: h.y,
               width: h.size,
               height: h.size * 0.72,
+              clipPath: h.clip,
               transform: `translate(-50%, 50%) rotate(${h.rot}deg)`,
-              boxShadow: "0 8px 24px -12px oklch(0 0 0 / 80%)",
+              filter: `drop-shadow(0 8px 16px oklch(0 0 0 / 70%))`,
+              animation: `hold-sway ${5 + (h.id % 5)}s ease-in-out ${h.id * 0.13}s infinite`,
             }}
           />
-        ))}
-
-        {/* section markers on the wall */}
-        {SECTIONS.map((s) => (
-          <div
-            key={s.id}
-            className="absolute left-8 text-xs tracking-[0.35em] text-muted-foreground uppercase"
-            style={{ bottom: s.at }}
-          >
-            {s.label}
-          </div>
         ))}
       </div>
 
       {/* height gauge */}
-      <div className="pointer-events-none fixed bottom-6 left-6 text-xs tracking-[0.3em] text-muted-foreground uppercase">
-        {Math.round(p * 100)} m
+      <div className="pointer-events-none fixed bottom-6 left-6 flex items-center gap-3 text-xs tracking-[0.3em] text-muted-foreground uppercase">
+        <span className="block h-px w-10 bg-warm/60" />
+        <span className="text-warm">{Math.round(p * 100)}</span> m
       </div>
 
       {/* tabs revealed as you gain height */}
-      {SECTIONS.map((s, i) =>
-        climb > s.at - 200 ? (
-          <Blind key={s.id} label={s.label} top={120 + i * 150}>
-            <SectionBody id={s.id} />
-          </Blind>
-        ) : null,
-      )}
+      {shown.map((s, i) => (
+        <Blind
+          key={s.id}
+          label={s.label}
+          top={120 + i * 150}
+          index={i}
+          isOpen={openId === s.id}
+          onOpenChange={(o) => setOpenId(o ? s.id : null)}
+        >
+          <SectionBody id={s.id} />
+        </Blind>
+      ))}
     </main>
   );
 }
@@ -151,9 +191,15 @@ function SectionBody({ id }: { id: string }) {
       <div className="space-y-8">
         <h2 className="text-3xl font-light">Projects</h2>
         {["Atlas — design system", "Field — mobile app", "Rope — brand identity"].map(
-          (t) => (
-            <div key={t} className="border-t border-border pt-4">
-              <p className="text-lg">{t}</p>
+          (t, i) => (
+            <div
+              key={t}
+              className="group border-t border-border pt-4 transition-colors hover:border-warm"
+              style={{
+                animation: `rise-in 600ms cubic-bezier(.16,1,.3,1) ${120 + i * 80}ms both`,
+              }}
+            >
+              <p className="text-lg transition-colors group-hover:text-warm">{t}</p>
               <p className="text-sm text-muted-foreground">Case study coming soon.</p>
             </div>
           ),
@@ -167,8 +213,14 @@ function SectionBody({ id }: { id: string }) {
         <h2 className="text-3xl font-light">Skills</h2>
         <ul className="space-y-2 text-sm text-muted-foreground">
           {["Interface design", "Motion & prototyping", "Brand systems", "Design ops"].map(
-            (s) => (
-              <li key={s} className="border-t border-border pt-2">
+            (s, i) => (
+              <li
+                key={s}
+                className="border-t border-border pt-2 transition-colors hover:text-warm"
+                style={{
+                  animation: `rise-in 600ms cubic-bezier(.16,1,.3,1) ${120 + i * 70}ms both`,
+                }}
+              >
                 {s}
               </li>
             ),
@@ -183,7 +235,10 @@ function SectionBody({ id }: { id: string }) {
       <p className="text-sm text-muted-foreground">
           Feel free to reach out and say hello!
       </p>
-      <a className="text-lg underline underline-offset-4" href="mailto:benbaxandall@btinternet.com">
+      <a
+        className="text-lg text-warm underline underline-offset-4"
+        href="mailto:benbaxandall@btinternet.com"
+      >
         benbaxandall@btinternet.com
       </a>
     </div>
