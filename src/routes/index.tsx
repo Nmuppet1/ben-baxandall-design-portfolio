@@ -36,7 +36,7 @@ function Index() {
     let raf = 0;
     const tick = () => {
       if (!grip.current) {
-        vel.current *= 0.72; // friction slows the swing after a pull
+        vel.current *= 0.98; // friction slows the swing after a pull
         if (Math.abs(vel.current) > 0.2) set(climbRef.current + vel.current);
       }
       raf = requestAnimationFrame(tick);
@@ -91,7 +91,7 @@ function Index() {
         <div className="absolute inset-x-0 bottom-0 flex h-screen flex-col items-center justify-center gap-4 px-6 text-center">
           <h1 className="text-5xl font-light tracking-tight md:text-7xl">Ben</h1>
           <p className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase">
-            Enthusiast in design, engineering and climbing &amp; brand
+            Enthusiast in design, engineering and climbing &amp;
           </p>
           <p className="mt-10 animate-pulse text-xs tracking-[0.3em] text-muted-foreground uppercase">
             Grab a hold and pull to climb
@@ -181,7 +181,7 @@ function SectionBody({ id }: { id: string }) {
     <div className="space-y-6">
       <h2 className="text-3xl font-light">Contact</h2>
       <p className="text-sm text-muted-foreground">
-        Always up for a new route. Say hello.
+          Feel free to reach out and say hello!
       </p>
       <a className="text-lg underline underline-offset-4" href="mailto:benbaxandall@btinternet.com">
         benbaxandall@btinternet.com
