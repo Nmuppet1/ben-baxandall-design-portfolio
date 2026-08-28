@@ -37,7 +37,8 @@ export const HOLDS: Hold[] = Array.from({ length: 46 }, (_, i) => {
     size: r(34 + rand(i + 2) * 46),
     rot: r(rand(i + 7) * 360),
     clip: SHAPES[i % SHAPES.length]!,
-    warm: rand(i + 11) > 0.78,
+    //warm: rand(i + 11) > 0.78,
+    warm: i < 0,
   };
 });
 

@@ -79,7 +79,7 @@ export function Blind({
       <div
         className="pointer-events-auto fixed inset-y-0 right-0 border-l border-border bg-card/95 backdrop-blur-md"
         style={{
-          width: "min(560px, 88vw)",
+          width: "min(700px, 90vw)",
           transform: `translateX(${(1 - open) * 100}%)`,
           transition: grip.current ? "none" : "transform 520ms cubic-bezier(.16,1,.3,1)",
           visibility: open === 0 ? "hidden" : "visible",

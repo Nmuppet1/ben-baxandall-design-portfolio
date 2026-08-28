@@ -27,7 +27,7 @@ export function Sunset({ t }: { t: number }) {
         style={{
           width: "38vmin",
           height: "38vmin",
-          bottom: `${40 + a * 24}vmin`,
+          bottom: `${35 + a * 24}vmin`,
           transform: "translateX(-50%)",
           background:
             "radial-gradient(circle, var(--warm) 0%, oklch(0.72 0.18 55) 55%, oklch(0.55 0.16 40 / 0%) 72%)",
