@@ -1,0 +1,99 @@
+.projects-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.carousel-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  cursor: grab;
+  touch-action: none; /* required so vertical page scroll doesn't fight horizontal drag */
+}
+
+.carousel-track:active {
+  cursor: grabbing;
+}
+
+.project-card {
+  flex: 0 0 auto;
+  padding: 0 12px;
+  box-sizing: border-box;
+  opacity: 0.5;
+  transform: scale(0.92);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.project-card img {
+  width: 100%;
+  display: block;
+  pointer-events: none; /* image shouldn't intercept the drag */
+}
+
+.project-card-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Pull-down detail panel, anchored under the carousel */
+.project-detail-pull {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pull-tab {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--line-color, #2b2b28);
+  cursor: grab;
+  touch-action: none;
+  padding: 0.5rem 1rem;
+}
+
+.pull-tab:active {
+  cursor: grabbing;
+}
+
+.pull-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: min(90vw, 700px);
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #f5f3ee;
+  padding: 2rem;
+  box-sizing: border-box;
+  z-index: 25;
+}
+
+.pull-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.pull-images img {
+  width: 100%;
+  display: block;
+}
+
+.pull-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #2b2b28;
+}

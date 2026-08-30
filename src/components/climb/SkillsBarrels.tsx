@@ -29,7 +29,7 @@ const SKILLS: Record<string, string[]> = {
 const ITEM_HEIGHT = 42; // vertical spacing between items, px
 const VISIBLE_RANGE = 3; // items shown on each side of the front one
 const DRAG_PX_PER_STEP = 50; // px of drag needed to move one item
-const AUTO_SCROLL_SPEED = 0.18; // items per second when idle
+const AUTO_SCROLL_SPEED = 0.5; // items per second when idle
 const RESUME_DELAY_MS = 650; // pause auto-scroll this long after a release, so the snap settles first
 
 // Shortest signed distance from `raw` to 0 on a circular list of length n
