@@ -4,6 +4,7 @@ import { Blind } from "@/components/climb/Blind";
 import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
 import { CLIMB_HEIGHT, HOLDS, SECTIONS } from "@/components/climb/holds";
+import ProjectsShowcase from "@/components/climb/ProjectsShowcase";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -165,7 +166,7 @@ function Index() {
       {/* height gauge */}
       <div className="pointer-events-none fixed bottom-6 left-6 flex items-center gap-3 text-xs tracking-[0.3em] text-muted-foreground uppercase">
         <span className="block h-px w-10 bg-warm/60" />
-        <span className="text-warm">{Math.round(p * 100)}</span> m
+        <span className="text-warm">{Math.round(p * 100)}</span> %
       </div>
 
       {/* tabs revealed as you gain height */}
@@ -186,27 +187,17 @@ function Index() {
 }
 
 function SectionBody({ id }: { id: string }) {
+
   if (id === "projects") {
     return (
       <div className="space-y-8">
         <h2 className="text-3xl font-light">Projects</h2>
-        {["Atlas — design system", "Field — mobile app", "Rope — brand identity"].map(
-          (t, i) => (
-            <div
-              key={t}
-              className="group border-t border-border pt-4 transition-colors hover:border-warm"
-              style={{
-                animation: `rise-in 600ms cubic-bezier(.16,1,.3,1) ${120 + i * 80}ms both`,
-              }}
-            >
-              <p className="text-lg transition-colors group-hover:text-warm">{t}</p>
-              <p className="text-sm text-muted-foreground">Case study coming soon.</p>
-            </div>
-          ),
-        )}
+          return <ProjectsShowcase />;
       </div>
     );
   }
+
+  
   if (id === "skills") {
     return (
       <div className="space-y-6">
