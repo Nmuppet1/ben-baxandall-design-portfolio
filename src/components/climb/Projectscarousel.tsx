@@ -66,7 +66,7 @@ export default function ProjectsCarousel({ progress = 1 }: { progress?: number }
     // Don't destructure/index the returned array — just loop over it on cleanup.
     const instances = Draggable.create(track, {
       type: "x",
-      inertia: true,
+      inertia: false,
       modifiers: { x: gsap.utils.wrap(-totalWidth, 0) },
       snap: { x: (value: number) => Math.round(value / CARD_WIDTH) * CARD_WIDTH },
       onDrag: updateSelected,

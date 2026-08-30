@@ -168,7 +168,7 @@ function Index() {
         <IntroSection />
 
         <WallSection side="left">
-          {/* <ProjectsCarousel /> */}
+          { <ProjectsCarousel /> }
         </WallSection>
 
         <WallSection side="right">
