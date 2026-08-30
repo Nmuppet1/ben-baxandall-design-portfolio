@@ -228,7 +228,7 @@ function WallSection({ side, children }: { side: "left" | "right"; children: Rea
   return (
     <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-16">
       <div
-        className={`pointer-events-auto w-full max-w-lg ${
+        className={`pointer-events-auto w-full max-w-3x1 ${
           side === "left" ? "mr-auto text-left" : "ml-auto text-right"
         }`}
       >

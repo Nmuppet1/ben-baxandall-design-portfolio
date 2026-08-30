@@ -29,14 +29,13 @@ const PROJECTS: Project[] = [
     title: "Web Design",
     grade: "V4",
     accent: "#c1633c",
-    cover: "/projects/web/cover.jpg",
+    cover: "public/web/Screenshot 2026-08-28 155817.png",
     description:
-      "Interfaces built where engineering meets craft — design systems, layout logic, and interaction detail.",
+      "Following a passion for the wild swimming society, I designed a website for users to find and share their favourite swims. This took me from initial sketches to a fully responsive website",
     gallery: [
-      { id: "w1", label: "Homepage concept", src: "/projects/web/1.jpg" },
-      { id: "w2", label: "Design tokens", src: "/projects/web/2.jpg" },
-      { id: "w3", label: "Component library", src: "/projects/web/3.jpg" },
-      { id: "w4", label: "Responsive states", src: "/projects/web/4.jpg" },
+      { id: "w1", label: "Sketch Designs", src: "public/web/Copy of Ben Baxandall- Portfolio (5).png" },
+      { id: "w2", label: "Login Page", src: "public/web/Screenshot 2026-08-28 155704.png" },
+      { id: "w3", label: "Map View", src: "public/web/Screenshot 2026-08-28 155750.png" },
     ],
   },
   {
@@ -44,14 +43,13 @@ const PROJECTS: Project[] = [
     title: "Animations",
     grade: "V6",
     accent: "#6f8a5e",
-    cover: "/projects/anim/cover.jpg",
+    cover: "",
     description:
-      "Motion studies exploring timing, easing, and physical feel — from micro-interactions to full sequences.",
+      "Getting to grips with motion design and animation within Blender",
     gallery: [
-      { id: "a1", label: "Easing study", src: "/projects/anim/1.jpg" },
-      { id: "a2", label: "Character rig", src: "/projects/anim/2.jpg" },
-      { id: "a3", label: "Loop cycle", src: "/projects/anim/3.jpg" },
-      { id: "a4", label: "Transition set", src: "/projects/anim/4.jpg" },
+      { id: "a1", label: "Rendering Experiment", src: "public/anim/0001-01451-ezgif.com-video-to-gif-converter.gif" },
+      { id: "a2", label: "Easing Study", src: "public/anim/0001-04371-ezgif.com-video-to-gif-converter.gif" },
+      { id: "a3", label: "Motion Graphics", src: "public/anim/glassanimation0001-02401-ezgif.com-video-to-gif-converter.gif" },
     ],
   },
   {
@@ -59,14 +57,14 @@ const PROJECTS: Project[] = [
     title: "Electronics",
     grade: "V7",
     accent: "#4a6fa5",
-    cover: "/projects/elec/cover.jpg",
+    cover: "",
     description:
       "Circuit design and embedded builds — from breadboard prototypes to soldered, working boards.",
     gallery: [
-      { id: "e1", label: "Schematic v1", src: "/projects/elec/1.jpg" },
-      { id: "e2", label: "PCB layout", src: "/projects/elec/2.jpg" },
-      { id: "e3", label: "Breadboard test", src: "/projects/elec/3.jpg" },
-      { id: "e4", label: "Final build", src: "/projects/elec/4.jpg" },
+      { id: "e1", label: "Schematic v1", src: "" },
+      { id: "e2", label: "PCB layout", src: "" },
+      { id: "e3", label: "Breadboard test", src: "" },
+      { id: "e4", label: "Final build", src: "" },
     ],
   },
   {
@@ -74,14 +72,14 @@ const PROJECTS: Project[] = [
     title: "Dodgy Ballers Kit",
     grade: "V3",
     accent: "#b0562f",
-    cover: "/projects/kit/cover.jpg",
+    cover: "public/kit/Copy of Ben Baxandall- Portfolio.png",
     description:
       "A kit design project — bold graphics and a slightly cheeky brand identity for a five-a-side team.",
     gallery: [
-      { id: "k1", label: "Kit concept", src: "/projects/kit/1.jpg" },
-      { id: "k2", label: "Crest design", src: "/projects/kit/2.jpg" },
-      { id: "k3", label: "Fabric mockup", src: "/projects/kit/3.jpg" },
-      { id: "k4", label: "Team photo", src: "/projects/kit/4.jpg" },
+      { id: "w1", label: "Logo Concept Evolution", src: "public/kit/Copy of Ben Baxandall- Portfolio (1).png" },
+      { id: "w2", label: "Color Palettes", src: "public/kit/Copy of Ben Baxandall- Portfolio (2).png" },
+      { id: "w3", label: "Exploring Alternative Styles", src: "public/kit/Copy of Ben Baxandall- Portfolio (3).png" },
+      { id: "w4", label: "Comparing Further Designs", src: "public/kit/Copy of Ben Baxandall- Portfolio (4).png" },
     ],
   },
   {
@@ -89,14 +87,14 @@ const PROJECTS: Project[] = [
     title: "Design Technology- Climbing Board",
     grade: "V3",
     accent: "#f49cf1",
-    cover: "/projects/kit/cover.jpg",
+    cover: "",
     description:
       "A project experiencing full design lifecycle from concept to final product and branding.",
     gallery: [
-      { id: "k1", label: "Kit concept", src: "/projects/kit/1.jpg" },
-      { id: "k2", label: "Crest design", src: "/projects/kit/2.jpg" },
-      { id: "k3", label: "Fabric mockup", src: "/projects/kit/3.jpg" },
-      { id: "k4", label: "Team photo", src: "/projects/kit/4.jpg" },
+      { id: "k1", label: "Kit concept", src: "" },
+      { id: "k2", label: "Crest design", src: "" },
+      { id: "k3", label: "Fabric mockup", src: "" },
+      { id: "k4", label: "Team photo", src: "" },
     ],
   },
 ];
