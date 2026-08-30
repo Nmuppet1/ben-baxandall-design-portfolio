@@ -1,49 +1,42 @@
-export type Hold = {
+export interface Hold {
   id: number;
-  x: number; // 0..1 across screen width
-  y: number; // px up from the bottom of the climb
-  size: number; // px
-  rot: number; // deg
-  clip: string; // css clip-path polygon
-  warm: boolean; // accent-coloured hold
-};
-
-export const CLIMB_HEIGHT = 3400;
-
-// Deterministic pseudo-random so server and client render the same holds.
-function rand(seed: number) {
-  const s = Math.sin(seed * 127.1) * 43758.5453;
-  return s - Math.floor(s);
+  x: number; // 0–1 fraction of wall width
+  y: number; // px from the bottom of the wall
+  size: number;
+  rot: number;
+  warm: boolean;
+  clip: string;
 }
 
-// A small set of hand-made "feels random" shapes: triangles, squished squares,
-// irregular circles, crimps and slopers.
-const SHAPES = [
-  "polygon(50% 0%, 96% 82%, 6% 90%)", // triangle
-  "polygon(12% 4%, 92% 0%, 100% 78%, 4% 96%)", // squished square
-  "polygon(30% 2%, 78% 8%, 100% 46%, 82% 92%, 26% 96%, 0% 52%)", // irregular circle
-  "polygon(6% 30%, 44% 0%, 98% 22%, 88% 84%, 22% 100%)", // sloper
-  "polygon(0% 22%, 62% 0%, 100% 40%, 54% 100%)", // pinch
-  "polygon(10% 10%, 90% 18%, 74% 96%, 26% 84%)", // crimp
-  "polygon(50% 4%, 100% 34%, 80% 100%, 18% 92%, 0% 36%)", // jug
+// A handful of irregular rock-like shapes, picked at random per hold.
+// If you have real hold artwork/clip-paths already, swap this array for
+// those and everything else here keeps working unchanged.
+const CLIP_SHAPES = [
+  "polygon(20% 0%, 80% 5%, 100% 45%, 85% 100%, 15% 95%, 0% 50%)",
+  "polygon(10% 10%, 60% 0%, 100% 30%, 90% 80%, 50% 100%, 0% 70%)",
+  "polygon(30% 0%, 100% 20%, 90% 90%, 40% 100%, 0% 60%, 5% 15%)",
+  "polygon(0% 30%, 40% 0%, 100% 10%, 95% 70%, 60% 100%, 10% 85%)",
 ];
 
-export const HOLDS: Hold[] = Array.from({ length: 46 }, (_, i) => {
-  const r = (n: number, d = 2) => Math.round(n * 10 ** d) / 10 ** d;
-  return {
-    id: i,
-    x: r(0.12 + rand(i + 1) * 0.76, 4),
-    y: r(560 + (i / 46) * (CLIMB_HEIGHT - 200) + rand(i + 3) * 60),
-    size: r(34 + rand(i + 2) * 46),
-    rot: r(rand(i + 7) * 360),
-    clip: SHAPES[i % SHAPES.length]!,
-    //warm: rand(i + 11) > 0.78,
-    warm: i < 0,
-  };
-});
+const EDGE_MARGIN = 90; // keep holds off the very top/bottom of the wall
+const HOLD_SPACING = 150; // roughly one hold per this many px of height
 
-export const SECTIONS = [
-  { id: "projects", label: "Projects", at: 900 },
-  { id: "skills", label: "Skills", at: 1900 },
-  { id: "contact", label: "Contact", at: 2900 },
-] as const;
+/**
+ * Scatters holds across the full height of the wall. Call this with the
+ * wall's *measured* height (see Index.tsx) rather than a hardcoded
+ * constant, so holds always cover however tall the page ends up being.
+ */
+export function generateHolds(height: number): Hold[] {
+  if (height <= 0) return [];
+  const count = Math.max(12, Math.floor(height / HOLD_SPACING));
+
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    x: 0.08 + Math.random() * 0.84,
+    y: EDGE_MARGIN + Math.random() * Math.max(height - EDGE_MARGIN * 2, 1),
+    size: 34 + Math.random() * 20,
+    rot: Math.random() * 36 - 18,
+    warm: Math.random() < 0.2,
+    clip: CLIP_SHAPES[Math.floor(Math.random() * CLIP_SHAPES.length)]!,
+  }));
+}

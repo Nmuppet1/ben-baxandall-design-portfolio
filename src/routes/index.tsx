@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { Blind } from "@/components/climb/Blind";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
-import { CLIMB_HEIGHT, HOLDS, SECTIONS } from "@/components/climb/holds";
+import { generateHolds } from "@/components/climb/holds";
 import ProjectsShowcase from "@/components/climb/ProjectsShowcase";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
 
@@ -29,12 +28,36 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [climb, setClimb] = useState(0);
-  const [openId, setOpenId] = useState<string | null>(null);
   const [puffs, setPuffs] = useState<Puff[]>([]);
+  const [wallHeight, setWallHeight] = useState(0);
+
   const climbRef = useRef(0);
+  const wallHeightRef = useRef(0);
   const vel = useRef(0);
   const grip = useRef<{ y: number; start: number } | null>(null);
   const puffId = useRef(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Measure the wall's real height from its rendered content (intro +
+  // all four sections) instead of a hardcoded constant, so it always
+  // matches however long the page actually is.
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const measure = () => setWallHeight(el.scrollHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
+    wallHeightRef.current = wallHeight;
+  }, [wallHeight]);
+
+  // Round so a resize by a few px doesn't reshuffle every hold on screen
+  const holdsHeightKey = Math.round(wallHeight / 50) * 50;
+  const holds = useMemo(() => generateHolds(holdsHeightKey), [holdsHeightKey]);
 
   // physics loop: momentum + friction + a little gravity sag
   useEffect(() => {
@@ -51,14 +74,15 @@ function Index() {
   }, []);
 
   const set = (v: number) => {
-    const next = Math.min(CLIMB_HEIGHT - 400, Math.max(0, v));
+    const maxClimb = Math.max(wallHeightRef.current - window.innerHeight, 0);
+    const next = Math.min(maxClimb, Math.max(0, v));
     if (next !== climbRef.current) {
       climbRef.current = next;
       setClimb(next);
     }
   };
 
-  const onGrab = (e: React.PointerEvent, hold: (typeof HOLDS)[number]) => {
+  const onGrab = (e: React.PointerEvent, hold: (typeof holds)[number]) => {
     (e.target as Element).setPointerCapture(e.pointerId);
     grip.current = { y: e.clientY, start: climbRef.current };
     vel.current = 0;
@@ -82,9 +106,8 @@ function Index() {
     grip.current = null;
   };
 
-  const p = climb / (CLIMB_HEIGHT - 400);
-  const visible = SECTIONS.filter((s) => climb > s.at - 200);
-  const shown = openId ? visible.filter((s) => s.id === openId) : visible;
+  const maxClimb = Math.max(wallHeight - (typeof window !== "undefined" ? window.innerHeight : 800), 1);
+  const p = climb / maxClimb;
 
   return (
     <main
@@ -106,48 +129,25 @@ function Index() {
         aria-hidden
       />
 
-      {/* the wall */}
+      {/* the wall — flex-col-reverse means the first child sits at the
+          bottom (the start of the climb), each next child stacks above it */}
       <div
-        className="absolute inset-x-0 bottom-0"
-        style={{
-          height: CLIMB_HEIGHT,
-          transform: `translateY(${climb}px)`,
-        }}
+        ref={contentRef}
+        className="absolute inset-x-0 bottom-0 flex flex-col-reverse"
+        style={{ transform: `translateY(${climb}px)` }}
       >
-        {/* intro at the very bottom */}
-        <div className="absolute inset-x-0 bottom-0 flex h-screen flex-col items-center justify-center gap-4 px-6 text-center">
-          <h1
-            className="text-5xl font-light tracking-tight md:text-7xl"
-            style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
-          >
-            Hi! I'm Ben Baxandall
-          </h1>
-          <p
-            className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase"
-            style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 140ms both" }}
-          >
-            I am an enthusiast in design, engineering and climbing. I love creating things that are both fun and functional. 
-          </p>
-          <p
-            className="mt-10 text-xs tracking-[0.3em] text-warm uppercase"
-            style={{ animation: "breathe 3s ease-in-out infinite" }}
-          >
-            This page has no scrollbars to give the sense of a true climb. Pull on the holds to scale the page!
-          </p>
-        </div>
-
         {/* chalk left on grabbed holds */}
         {puffs.map((puff) => (
           <ChalkPuff key={puff.id} puff={puff} />
         ))}
 
-        {/* holds */}
-        {HOLDS.map((h) => (
+        {/* holds, scattered across the full wall height */}
+        {holds.map((h) => (
           <button
             key={h.id}
             onPointerDown={(e) => onGrab(e, h)}
             aria-label="Climbing hold"
-            className={`absolute cursor-grab transition-[filter,opacity] duration-300 hover:brightness-125 active:cursor-grabbing ${
+            className={`absolute z-10 cursor-grab transition-[filter,opacity] duration-300 hover:brightness-125 active:cursor-grabbing ${
               h.warm ? "bg-warm/80" : "bg-card"
             }`}
             style={{
@@ -162,6 +162,26 @@ function Index() {
             }}
           />
         ))}
+
+        {/* sections, in climb order: intro, then Projects / Skills / Interests / Contact */}
+        <IntroSection />
+
+        <WallSection side="left">
+          <ProjectsShowcase />
+        </WallSection>
+
+        <WallSection side="right">
+          <h2 className="mb-8 text-3xl font-light">Skills</h2>
+          <SkillsBarrels />
+        </WallSection>
+
+        <WallSection side="left">
+          <InterestsSection />
+        </WallSection>
+
+        <WallSection side="right">
+          <ContactSection />
+        </WallSection>
       </div>
 
       {/* height gauge */}
@@ -169,52 +189,81 @@ function Index() {
         <span className="block h-px w-10 bg-warm/60" />
         <span className="text-warm">{Math.round(p * 100)}</span> %
       </div>
-
-      {/* tabs revealed as you gain height */}
-      {shown.map((s, i) => (
-        <Blind
-          key={s.id}
-          label={s.label}
-          top={120 + i * 150}
-          index={i}
-          isOpen={openId === s.id}
-          onOpenChange={(o) => setOpenId(o ? s.id : null)}
-        >
-          <SectionBody id={s.id} />
-        </Blind>
-      ))}
     </main>
   );
 }
 
-function SectionBody({ id }: { id: string }) {
-
-  if (id === "projects") {
-    return (
-      <div className="space-y-8">
-        <h2 className="text-3xl font-light">Projects</h2>
-          return <ProjectsShowcase />;
+function IntroSection() {
+  return (
+    <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center pointer-events-none">
+      <div className="pointer-events-auto flex flex-col items-center gap-4">
+        <h1
+          className="text-5xl font-light tracking-tight md:text-7xl"
+          style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
+        >
+          Ben
+        </h1>
+        <p
+          className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase"
+          style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 140ms both" }}
+        >
+           I am an enthusiast in design, engineering and climbing. I love creating things that are both fun and functional. 
+        </p>
+        <p
+          className="mt-10 text-xs tracking-[0.3em] text-warm uppercase"
+          style={{ animation: "breathe 3s ease-in-out infinite" }}
+        >
+          This page has no scrollbars to give the sense of a true, tough climb. Pull on the holds to scale the page!
+        </p>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  
-  if (id === "skills") {
-    return (
-      <div>
-        <h2 className="text-3xl font-light mb-8">
-          Skills
-        </h2>
-        <SkillsBarrels />
+// Alternates a section's content block to the left or right edge of the
+// wall, mirroring the original align-left/align-right pattern: the
+// section itself lets clicks pass through to the holds behind it, and
+// only the content block re-enables pointer events.
+function WallSection({ side, children }: { side: "left" | "right"; children: React.ReactNode }) {
+  return (
+    <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-16">
+      <div
+        className={`pointer-events-auto w-full max-w-md ${
+          side === "left" ? "mr-auto text-left" : "ml-auto text-right"
+        }`}
+      >
+        {children}
       </div>
-    );
-  }
+    </section>
+  );
+}
+
+function InterestsSection() {
+  // Placeholder — swap these for your real interests
+  const interests = ["Bouldering", "Motorsport", "Film photography", "Sneaker design", "Woodworking"];
+
+  return (
+    <div>
+      <h2 className="mb-4 text-3xl font-light">Interests</h2>
+      <p className="mb-6 text-sm text-muted-foreground">
+        A few things I spend time on outside of design and engineering.
+      </p>
+      <ul className="flex flex-wrap justify-end gap-2">
+        {interests.map((i) => (
+          <li key={i} className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+            {i}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ContactSection() {
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-light">Contact</h2>
-      <p className="text-sm text-muted-foreground">
-          Feel free to reach out and say hello!
-      </p>
+      <p className="text-sm text-muted-foreground">Feel free to reach out and say hello!</p>
       <a
         className="text-lg text-warm underline underline-offset-4"
         href="mailto:benbaxandall@btinternet.com"
