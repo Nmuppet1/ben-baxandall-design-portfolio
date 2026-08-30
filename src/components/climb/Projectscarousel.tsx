@@ -15,10 +15,10 @@ type Project = {
 
 // Swap in your real projects/images/copy
 const PROJECTS: Project[] = [
-  { id: "p1", title: "Project One", thumb: "/images/project1-thumb.jpg", images: ["/images/project1-1.jpg", "/images/project1-2.jpg"], description: "Description of project one." },
-  { id: "p2", title: "Project Two", thumb: "/images/project2-thumb.jpg", images: ["/images/project2-1.jpg"], description: "Description of project two." },
-  { id: "p3", title: "Project Three", thumb: "/images/project3-thumb.jpg", images: ["/images/project3-1.jpg"], description: "Description of project three." },
-  { id: "p4", title: "Project Four", thumb: "/images/project4-thumb.jpg", images: ["/images/project4-1.jpg"], description: "Description of project four." },
+  { id: "p1", title: "Project One", thumb: "public/elec/PID.png", images: ["public/elec/PID.png", "public/elec/PID.png"], description: "Description of project one." },
+  { id: "p2", title: "Project Two", thumb: "public/elec/PID.png", images: ["public/elec/PID.png", "public/elec/PID.png"], description: "Description of project two." },
+  { id: "p3", title: "Project Three", thumb: "public/elec/PID.png", images: ["public/elec/PID.png", "public/elec/PID.png"], description: "Description of project three." },
+  { id: "p4", title: "Project Four", thumb: "public/elec/PID.png", images: ["public/elec/PID.png", "public/elec/PID.png"], description: "Description of project four." },
 ];
 
 const CARD_WIDTH = 320; // px, include your own gap in this number
