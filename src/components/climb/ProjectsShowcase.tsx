@@ -1,10 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { Code2, Sparkles, Cpu, Shirt, ChevronDown } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 /**
- * Drop photos into /public/projects/<id>/ — cover.jpg for the fan card,
+ * Drop photos into /public/projects/<id>/ — cover.jpg for the stack card,
  * 1.jpg..4.jpg for the gallery. Missing files just fall back to the
  * accent-colour gradient so nothing breaks while you're adding photos.
  */
@@ -19,7 +17,6 @@ interface Project {
   id: string;
   title: string;
   grade: string;
-  icon: LucideIcon;
   accent: string;
   cover: string;
   description: string;
@@ -31,25 +28,23 @@ const PROJECTS: Project[] = [
     id: "web",
     title: "Web Design",
     grade: "V4",
-    icon: Code2,
     accent: "#c1633c",
-    cover: "public/WebDesign.png",
+    cover: "/projects/web/cover.jpg",
     description:
       "Interfaces built where engineering meets craft — design systems, layout logic, and interaction detail.",
     gallery: [
-      { id: "w1", label: "Homepage concept", src: "" },
-      { id: "w2", label: "Design tokens", src: "" },
-      { id: "w3", label: "Component library", src: "" },
-      { id: "w4", label: "Responsive states", src: "" },
+      { id: "w1", label: "Homepage concept", src: "/projects/web/1.jpg" },
+      { id: "w2", label: "Design tokens", src: "/projects/web/2.jpg" },
+      { id: "w3", label: "Component library", src: "/projects/web/3.jpg" },
+      { id: "w4", label: "Responsive states", src: "/projects/web/4.jpg" },
     ],
   },
   {
     id: "anim",
     title: "Animations",
     grade: "V6",
-    icon: Sparkles,
     accent: "#6f8a5e",
-    cover: "public/Electronics.png",
+    cover: "/projects/anim/cover.jpg",
     description:
       "Motion studies exploring timing, easing, and physical feel — from micro-interactions to full sequences.",
     gallery: [
@@ -63,9 +58,8 @@ const PROJECTS: Project[] = [
     id: "elec",
     title: "Electronics",
     grade: "V7",
-    icon: Cpu,
     accent: "#4a6fa5",
-    cover: "public/PID.png",
+    cover: "/projects/elec/cover.jpg",
     description:
       "Circuit design and embedded builds — from breadboard prototypes to soldered, working boards.",
     gallery: [
@@ -79,11 +73,25 @@ const PROJECTS: Project[] = [
     id: "kit",
     title: "Dodgy Ballers Kit",
     grade: "V3",
-    icon: Shirt,
     accent: "#b0562f",
-    cover: "public/DodgyBallers.JPEG",
+    cover: "/projects/kit/cover.jpg",
     description:
       "A kit design project — bold graphics and a slightly cheeky brand identity for a five-a-side team.",
+    gallery: [
+      { id: "k1", label: "Kit concept", src: "/projects/kit/1.jpg" },
+      { id: "k2", label: "Crest design", src: "/projects/kit/2.jpg" },
+      { id: "k3", label: "Fabric mockup", src: "/projects/kit/3.jpg" },
+      { id: "k4", label: "Team photo", src: "/projects/kit/4.jpg" },
+    ],
+  },
+  {
+  id: "dt",
+    title: "Design Technology- Climbing Board",
+    grade: "V3",
+    accent: "#f49cf1",
+    cover: "/projects/kit/cover.jpg",
+    description:
+      "A project experiencing full design lifecycle from concept to final product and branding.",
     gallery: [
       { id: "k1", label: "Kit concept", src: "/projects/kit/1.jpg" },
       { id: "k2", label: "Crest design", src: "/projects/kit/2.jpg" },
@@ -94,154 +102,145 @@ const PROJECTS: Project[] = [
 ];
 
 const N = PROJECTS.length;
-const STEP_ANGLE = 10; // degrees between neighbouring cards
-const SLOT_PX = 140; // px of drag needed to rotate one card
-
-// Wraps a slot difference into the range (-N/2, N/2] so the fan always
-// takes the shortest path round, like a real dial.
-function wrapSlot(raw: number) {
-  return (((raw + N / 2) % N) + N) % N - N / 2;
-}
+const CARD_W = 170;
+const CARD_H = 210;
+const STACK_STEP_X = 34; // px each remaining card sits further right
+const STACK_STEP_Y = 8; // px each remaining card sits further down
+const DRAG_PX_PER_STEP = 130; // px of drag to move one card
 
 export default function ProjectsShowcase() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const offsetRef = useRef(0);
-  const dragState = useRef({ dragging: false, startX: 0, startOffset: 0 });
+  const [frontIndex, setFrontIndex] = useState(0);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const indexRef = useRef(0);
+  const dragState = useRef({ dragging: false, startX: 0, startIndex: 0 });
 
-  const layoutCards = (offset: number, animate: boolean) => {
+  const layoutCards = (index: number, animate: boolean) => {
     PROJECTS.forEach((_, i) => {
       const el = cardRefs.current[i];
       if (!el) return;
-      const slot = wrapSlot(i - offset);
-      const abs = Math.abs(slot);
-      const vars = {
-        rotation: slot * STEP_ANGLE,
-        y: -20 + abs * 26,
-        scale: 1 - abs * 0.14,
-        opacity: 1 - abs * 0.28,
-        zIndex: Math.round((N - abs) * 10),
-      };
+      const offset = i - index;
+
+      // offset >= 0: still ahead (or current) — recedes in a line to the right
+      // offset < 0: already passed — slides away and fades instead of piling up
+      const vars =
+        offset >= 0
+          ? {
+              x: offset * STACK_STEP_X,
+              y: offset * STACK_STEP_Y,
+              scale: 1 - offset * 0.07,
+              opacity: Math.max(0.25, 1 - offset * 0.2),
+              zIndex: Math.round((N - offset) * 10),
+            }
+          : {
+              x: offset * 60,
+              y: -offset * 10,
+              scale: Math.max(0.7, 1 + offset * 0.3),
+              opacity: Math.max(0, 1 + offset * 1.6),
+              zIndex: 5,
+            };
+
       if (animate) {
-        gsap.to(el, { ...vars, duration: 0.7, ease: "elastic.out(1,0.65)" });
+        gsap.to(el, { ...vars, duration: 0.6, ease: "power3.out" });
       } else {
         gsap.set(el, vars);
       }
     });
   };
 
-  // Initial layout, before paint, so cards don't flash in the wrong spot
   useLayoutEffect(() => {
     layoutCards(0, false);
   }, []);
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    dragState.current = { dragging: true, startX: e.clientX, startOffset: offsetRef.current };
+    dragState.current = { dragging: true, startX: e.clientX, startIndex: indexRef.current };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!dragState.current.dragging) return;
     const deltaX = e.clientX - dragState.current.startX;
-    const newOffset = dragState.current.startOffset - deltaX / SLOT_PX;
-    offsetRef.current = newOffset;
-    layoutCards(newOffset, false);
+    const raw = dragState.current.startIndex - deltaX / DRAG_PX_PER_STEP;
+    const clamped = Math.min(Math.max(raw, 0), N - 1); // hard stop at either end
+    indexRef.current = clamped;
+    layoutCards(clamped, false);
   };
 
   const onPointerUp = () => {
     if (!dragState.current.dragging) return;
     dragState.current.dragging = false;
-    const nearest = Math.round(offsetRef.current);
-    offsetRef.current = nearest;
-    layoutCards(nearest, true);
-    setSelectedIndex(((nearest % N) + N) % N);
+    const snapped = Math.min(Math.max(Math.round(indexRef.current), 0), N - 1);
+    indexRef.current = snapped;
+    layoutCards(snapped, true);
+    setFrontIndex(snapped);
   };
 
-  const selected = PROJECTS[selectedIndex] ?? PROJECTS[0]!;
+  const selected = PROJECTS[frontIndex] ?? PROJECTS[0]!;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-light">Projects</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Drag left or right — whichever card lands at the front is selected
+        <p className="mt-1 text-sm text-muted-foreground">
+          Drag the stack — it stops at the first and last project
         </p>
       </div>
 
-      {/* Fan / demiclock carousel */}
+      {/* Photo stack — no text on the cards themselves */}
       <div
-        className="relative w-full max-w-md mx-auto h-[300px] cursor-grab active:cursor-grabbing"
-        style={{ touchAction: "none" }}
+        className="relative cursor-grab active:cursor-grabbing"
+        style={{
+          width: CARD_W + STACK_STEP_X * (N - 1) + 20,
+          height: CARD_H + STACK_STEP_Y * (N - 1) + 20,
+          touchAction: "none",
+        }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
       >
-        {PROJECTS.map((p, i) => {
-          const Icon = p.icon;
-          const isFront = i === selectedIndex;
-          return (
-            <button
-              key={p.id}
-              ref={(el) => {
-                cardRefs.current[i] = el;
-              }}
-              tabIndex={-1}
-              className={`absolute bottom-0 left-1/2 w-[168px] h-[220px] -ml-[84px] rounded-2xl border text-left overflow-hidden pointer-events-none ${
-                isFront ? "border-warm" : "border-border"
-              }`}
-              style={{
-                transformOrigin: "50% 100%",
-                backgroundImage: `linear-gradient(160deg, ${p.accent}22, ${p.accent}55), url(${p.cover})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            >
-              <div className="h-full w-full flex flex-col justify-between p-4 bg-gradient-to-t from-black/50 via-black/0 to-transparent">
-                <div className="flex items-center justify-between">
-                  <Icon className="w-6 h-6 text-white drop-shadow" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full border border-white/60 text-white">
-                    {p.grade}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-base font-medium leading-tight text-white drop-shadow">{p.title}</p>
-                  {isFront && (
-                    <p className="text-[11px] mt-1 flex items-center gap-1 text-white/80">
-                      selected <ChevronDown className="w-3 h-3" />
-                    </p>
-                  )}
-                </div>
-              </div>
-            </button>
-          );
-        })}
+        {PROJECTS.map((p, i) => (
+          <div
+            key={p.id}
+            ref={(el) => {
+              cardRefs.current[i] = el;
+            }}
+            className="absolute top-0 left-0 overflow-hidden rounded-2xl border border-border"
+            style={{
+              width: CARD_W,
+              height: CARD_H,
+              backgroundImage: `linear-gradient(160deg, ${p.accent}22, ${p.accent}55), url(${p.cover})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+        ))}
       </div>
 
-      {/* Detail panel — always shows whichever project is at the front */}
-      <DetailPanel project={selected} />
+      {/* All text lives here, off the photos, updating with the selection */}
+      <DetailText project={selected} />
+
+      <GalleryStack key={selected.id} project={selected} />
     </div>
   );
 }
 
-function DetailPanel({ project }: { project: Project }) {
-  const panelRef = useRef<HTMLDivElement>(null);
+function DetailText({ project }: { project: Project }) {
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!panelRef.current) return;
-    gsap.fromTo(
-      panelRef.current,
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }
-    );
+    if (!ref.current) return;
+    gsap.fromTo(ref.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
   }, [project.id]);
 
   return (
-    <div ref={panelRef} className="w-full max-w-md mx-auto rounded-2xl border border-border p-6 bg-background/60">
-      <p className="text-xl font-medium">{project.title}</p>
-      <p className="text-xs text-muted-foreground mb-3">{project.grade} route</p>
-      <p className="text-sm mb-5 text-muted-foreground">{project.description}</p>
-      <GalleryStack key={project.id} project={project} />
+    <div ref={ref}>
+      <div className="flex items-center gap-2">
+        <p className="text-xl font-medium">{project.title}</p>
+        <span className="rounded-full border border-warm px-1.5 py-0.5 text-[10px] text-warm">
+          {project.grade}
+        </span>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">{project.description}</p>
     </div>
   );
 }
@@ -283,11 +282,13 @@ function GalleryStack({ project }: { project: Project }) {
 
   return (
     <div>
-      <div className="relative w-full h-[180px]">
+      <div className="relative h-[180px] w-full">
         {project.gallery.map((img, i) => {
           const offset = (i - index + project.gallery.length) % project.gallery.length;
           if (offset > 2) return null; // only render the top 3 of the stack
           const isTop = offset === 0;
+          const stackY = -offset * 10; // stacked above the front photo, not below
+
           return (
             <div
               key={img.id}
@@ -296,12 +297,12 @@ function GalleryStack({ project }: { project: Project }) {
               onPointerMove={isTop ? onMove : undefined}
               onPointerUp={isTop ? onUp : undefined}
               onPointerLeave={isTop ? onUp : undefined}
-              className="absolute inset-0 rounded-xl border border-border flex items-end p-4"
+              className="absolute inset-0 flex items-end rounded-xl border border-border p-4"
               style={{
                 backgroundImage: `linear-gradient(160deg, ${project.accent}33, ${project.accent}77), url(${img.src})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                transform: `translateY(${offset * 10}px) scale(${1 - offset * 0.05})`,
+                transform: `translateY(${stackY}px) scale(${1 - offset * 0.05})`,
                 zIndex: 10 - offset,
                 opacity: 1 - offset * 0.15,
                 cursor: isTop ? "grab" : "default",
@@ -313,7 +314,7 @@ function GalleryStack({ project }: { project: Project }) {
           );
         })}
       </div>
-      <p className="text-center text-xs mt-3 text-muted-foreground">
+      <p className="mt-3 text-center text-xs text-muted-foreground">
         {index + 1} / {project.gallery.length} — pull down to see next
       </p>
     </div>
