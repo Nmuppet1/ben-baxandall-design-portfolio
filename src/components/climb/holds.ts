@@ -18,8 +18,8 @@ const CLIP_SHAPES = [
   "polygon(0% 30%, 40% 0%, 100% 10%, 95% 70%, 60% 100%, 10% 85%)",
 ];
 
-const EDGE_MARGIN = 90; // keep holds off the very top/bottom of the wall
-const HOLD_SPACING = 150; // roughly one hold per this many px of height
+const EDGE_MARGIN = 100; // keep holds off the very top/bottom of the wall
+const HOLD_SPACING = 100; // roughly one hold per this many px of height
 
 /**
  * Scatters holds across the full height of the wall. Call this with the

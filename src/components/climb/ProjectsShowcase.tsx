@@ -33,14 +33,14 @@ const PROJECTS: Project[] = [
     grade: "V4",
     icon: Code2,
     accent: "#c1633c",
-    cover: "/projects/web/cover.jpg",
+    cover: "public/WebDesign.png",
     description:
       "Interfaces built where engineering meets craft — design systems, layout logic, and interaction detail.",
     gallery: [
-      { id: "w1", label: "Homepage concept", src: "/projects/web/1.jpg" },
-      { id: "w2", label: "Design tokens", src: "/projects/web/2.jpg" },
-      { id: "w3", label: "Component library", src: "/projects/web/3.jpg" },
-      { id: "w4", label: "Responsive states", src: "/projects/web/4.jpg" },
+      { id: "w1", label: "Homepage concept", src: "" },
+      { id: "w2", label: "Design tokens", src: "" },
+      { id: "w3", label: "Component library", src: "" },
+      { id: "w4", label: "Responsive states", src: "" },
     ],
   },
   {
@@ -49,7 +49,7 @@ const PROJECTS: Project[] = [
     grade: "V6",
     icon: Sparkles,
     accent: "#6f8a5e",
-    cover: "/projects/anim/cover.jpg",
+    cover: "public/Electronics.png",
     description:
       "Motion studies exploring timing, easing, and physical feel — from micro-interactions to full sequences.",
     gallery: [
@@ -65,7 +65,7 @@ const PROJECTS: Project[] = [
     grade: "V7",
     icon: Cpu,
     accent: "#4a6fa5",
-    cover: "/projects/elec/cover.jpg",
+    cover: "public/PID.png",
     description:
       "Circuit design and embedded builds — from breadboard prototypes to soldered, working boards.",
     gallery: [
@@ -81,7 +81,7 @@ const PROJECTS: Project[] = [
     grade: "V3",
     icon: Shirt,
     accent: "#b0562f",
-    cover: "/projects/kit/cover.jpg",
+    cover: "public/DodgyBallers.JPEG",
     description:
       "A kit design project — bold graphics and a slightly cheeky brand identity for a five-a-side team.",
     gallery: [

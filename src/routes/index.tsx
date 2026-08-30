@@ -64,7 +64,7 @@ function Index() {
     let raf = 0;
     const tick = () => {
       if (!grip.current) {
-        vel.current *= 0.55; // friction slows the swing after a pull
+        vel.current *= 0.45; // friction slows the swing after a pull
         if (Math.abs(vel.current) > 0.2) set(climbRef.current + vel.current);
       }
       raf = requestAnimationFrame(tick);
@@ -201,7 +201,7 @@ function IntroSection() {
           className="text-5xl font-light tracking-tight md:text-7xl"
           style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
         >
-          Ben
+          Ben Baxandall
         </h1>
         <p
           className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase"
@@ -228,7 +228,7 @@ function WallSection({ side, children }: { side: "left" | "right"; children: Rea
   return (
     <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-16">
       <div
-        className={`pointer-events-auto w-full max-w-md ${
+        className={`pointer-events-auto w-full max-w-x1 ${
           side === "left" ? "mr-auto text-left" : "ml-auto text-right"
         }`}
       >
@@ -240,13 +240,13 @@ function WallSection({ side, children }: { side: "left" | "right"; children: Rea
 
 function InterestsSection() {
   // Placeholder — swap these for your real interests
-  const interests = ["Bouldering", "Motorsport", "Film photography", "Sneaker design", "Woodworking"];
+  const interests = ["Raspberry Pi", "3D Printing", "Animation", "Wild Swimming", "Football", "Running", "Cooking", "Guitar", "Reading"];
 
   return (
     <div>
       <h2 className="mb-4 text-3xl font-light">Interests</h2>
       <p className="mb-6 text-sm text-muted-foreground">
-        A few things I spend time on outside of design and engineering.
+        A few things I spend time on outside of design and engineering, influencing the way I approach challenges.
       </p>
       <ul className="flex flex-wrap justify-end gap-2">
         {interests.map((i) => (
