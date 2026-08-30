@@ -94,7 +94,7 @@ const PROJECTS: Project[] = [
 ];
 
 const N = PROJECTS.length;
-const STEP_ANGLE = 26; // degrees between neighbouring cards
+const STEP_ANGLE = 10; // degrees between neighbouring cards
 const SLOT_PX = 140; // px of drag needed to rotate one card
 
 // Wraps a slot difference into the range (-N/2, N/2] so the fan always

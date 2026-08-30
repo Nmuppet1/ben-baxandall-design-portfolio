@@ -5,6 +5,7 @@ import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
 import { CLIMB_HEIGHT, HOLDS, SECTIONS } from "@/components/climb/holds";
 import ProjectsShowcase from "@/components/climb/ProjectsShowcase";
+import SkillsBarrels from "@/components/climb/SkillsBarrels";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -200,23 +201,11 @@ function SectionBody({ id }: { id: string }) {
   
   if (id === "skills") {
     return (
-      <div className="space-y-6">
-        <h2 className="text-3xl font-light">Skills</h2>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          {["Interface design", "Motion & prototyping", "Brand systems", "Design ops"].map(
-            (s, i) => (
-              <li
-                key={s}
-                className="border-t border-border pt-2 transition-colors hover:text-warm"
-                style={{
-                  animation: `rise-in 600ms cubic-bezier(.16,1,.3,1) ${120 + i * 70}ms both`,
-                }}
-              >
-                {s}
-              </li>
-            ),
-          )}
-        </ul>
+      <div>
+        <h2 className="text-3xl font-light mb-8">
+          Skills
+        </h2>
+        <SkillsBarrels />
       </div>
     );
   }

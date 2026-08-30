@@ -1,0 +1,67 @@
+.skill-barrels {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  perspective: 600px;
+}
+
+.skill-barrel {
+  width: 180px;
+  text-align: center;
+}
+
+.barrel-window {
+  height: 100px;
+  overflow: hidden;
+  position: relative;
+  perspective: 500px;
+}
+
+.barrel {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  top: 25px;
+  transform-style: preserve-3d;
+}
+
+.skill {
+  position: absolute;
+  width: 100%;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  backface-visibility: hidden;
+}
+
+.barrel-window::before,
+.barrel-window::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 30px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.barrel-window::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-background),
+    transparent
+  );
+}
+
+.barrel-window::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--color-background),
+    transparent
+  );
+}
