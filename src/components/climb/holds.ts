@@ -8,7 +8,7 @@ export type Hold = {
   warm: boolean; // accent-coloured hold
 };
 
-export const CLIMB_HEIGHT = 3600;
+export const CLIMB_HEIGHT = 3400;
 
 // Deterministic pseudo-random so server and client render the same holds.
 function rand(seed: number) {
