@@ -3,7 +3,7 @@
  * `t` is 0..1 — it only starts showing in the last stretch of the wall.
  */
 export function Sunset({ t }: { t: number }) {
-  const a = Math.min(1, Math.max(0, (t - 0.75) / 0.3));
+  const a = Math.min(1, Math.max(0, (t - 0.90) / 0.3));
   if (a <= 0) return null;
 
   return (
