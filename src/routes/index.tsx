@@ -5,6 +5,7 @@ import { Sunset } from "@/components/climb/Sunset";
 import { generateHolds } from "@/components/climb/holds";
 import ProjectsShowcase from "@/components/climb/ProjectsShowcase";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
+import NameMorph from "@/components/climb/NameMorph";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -201,6 +202,7 @@ function IntroSection() {
           className="text-5xl font-light tracking-tight md:text-7xl"
           style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
         >
+          <NameMorph />
           Ben Baxandall
         </h1>
         <p
