@@ -120,19 +120,19 @@ function Index() {
             className="text-5xl font-light tracking-tight md:text-7xl"
             style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
           >
-            Ben
+            Hi! I'm Ben Baxandall
           </h1>
           <p
             className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase"
             style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 140ms both" }}
           >
-            Enthusiast in design, engineering and climbing &amp; brand
+            I am an enthusiast in design, engineering and climbing. I love creating things that are both fun and functional. 
           </p>
           <p
             className="mt-10 text-xs tracking-[0.3em] text-warm uppercase"
             style={{ animation: "breathe 3s ease-in-out infinite" }}
           >
-            Grab a hold and pull to climb
+            This page has no scrollbars to give the sense of a true climb. Pull on the holds to scale the page!
           </p>
         </div>
 

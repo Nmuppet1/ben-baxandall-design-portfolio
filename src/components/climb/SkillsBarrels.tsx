@@ -23,63 +23,78 @@ const SKILLS: Record<string, string[]> = {
     "FPGA Development",
   ],
   Programming: ["C++", "C#", "GitHub", "OpenCV", "Python", "Verilog", "MATLAB", "React"],
-  
   Creative: ["Blender", "Filmora", "Canva", "3D Printing", "Cura Slicer", "UI / UX"],
 };
 
-const RADIUS = 80; // how far items sit from the barrel's centre axis
-const DRAG_SENSITIVITY = 0.6; // degrees of rotation per pixel dragged
+const ITEM_HEIGHT = 42; // vertical spacing between items, px
+const VISIBLE_RANGE = 3; // items shown on each side of the front one
+const DRAG_PX_PER_STEP = 50; // px of drag needed to move one item
+
+// Shortest signed distance from `raw` to 0 on a circular list of length n
+function wrapOffset(raw: number, n: number) {
+  return (((raw + n / 2) % n) + n) % n - n / 2;
+}
 
 function Barrel({ title, items }: { title: string; items: string[] }) {
-  const barrelRef = useRef<HTMLDivElement>(null);
-  const spinRef = useRef(0);
-  const dragState = useRef({ dragging: false, startY: 0, startSpin: 0 });
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const indexRef = useRef(0); // continuous position, in "items"
+  const dragState = useRef({ dragging: false, startY: 0, startIndex: 0 });
   const [frontIndex, setFrontIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  const angle = 360 / items.length;
+  const n = items.length;
 
-  // Position every skill around the drum once, before first paint
-  useLayoutEffect(() => {
-    if (!barrelRef.current) return;
-    const children = gsap.utils.toArray<HTMLElement>(barrelRef.current.children);
-    children.forEach((el, i) => {
-      gsap.set(el, { rotationX: i * angle, z: RADIUS });
+  const layout = (index: number, animate: boolean) => {
+    items.forEach((_, i) => {
+      const el = itemRefs.current[i];
+      if (!el) return;
+      const offset = wrapOffset(i - index, n);
+      const abs = Math.abs(offset);
+      const inRange = abs <= VISIBLE_RANGE;
+      const vars = {
+        y: offset * ITEM_HEIGHT,
+        rotationX: offset * -12,
+        scale: 1 - abs * 0.07,
+        opacity: inRange ? Math.max(0, 1 - abs * 0.24) : 0,
+      };
+      if (animate) {
+        gsap.to(el, { ...vars, duration: 0.6, ease: "elastic.out(1, 0.65)" });
+      } else {
+        gsap.set(el, vars);
+      }
     });
-    gsap.set(barrelRef.current, { rotationX: 0 });
-    spinRef.current = 0;
-  }, [items, angle]);
+  };
+
+  // Lay everything out once, before first paint
+  useLayoutEffect(() => {
+    indexRef.current = 0;
+    layout(0, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    dragState.current = { dragging: true, startY: e.clientY, startSpin: spinRef.current };
+    dragState.current = { dragging: true, startY: e.clientY, startIndex: indexRef.current };
     setIsDragging(true);
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragState.current.dragging || !barrelRef.current) return;
+    if (!dragState.current.dragging) return;
     const deltaY = e.clientY - dragState.current.startY;
-    const newSpin = dragState.current.startSpin + deltaY * DRAG_SENSITIVITY;
-    spinRef.current = newSpin;
-    gsap.set(barrelRef.current, { rotationX: newSpin });
+    const newIndex = dragState.current.startIndex - deltaY / DRAG_PX_PER_STEP;
+    indexRef.current = newIndex;
+    layout(newIndex, false);
   };
 
   const onPointerUp = () => {
-    if (!dragState.current.dragging || !barrelRef.current) return;
+    if (!dragState.current.dragging) return;
     dragState.current.dragging = false;
     setIsDragging(false);
 
-    // Snap to the nearest full step so a skill always lands facing front
-    const snapped = Math.round(spinRef.current / angle) * angle;
-    spinRef.current = snapped;
-    gsap.to(barrelRef.current, {
-      rotationX: snapped,
-      duration: 0.6,
-      ease: "elastic.out(1, 0.6)",
-    });
-
-    const idx = (((Math.round(-snapped / angle)) % items.length) + items.length) % items.length;
-    setFrontIndex(idx);
+    const snapped = Math.round(indexRef.current);
+    indexRef.current = snapped;
+    layout(snapped, true);
+    setFrontIndex(((snapped % n) + n) % n);
   };
 
   return (
@@ -94,9 +109,15 @@ function Barrel({ title, items }: { title: string; items: string[] }) {
         onPointerLeave={onPointerUp}
         style={{ cursor: isDragging ? "grabbing" : "grab", touchAction: "none" }}
       >
-        <div ref={barrelRef} className="barrel">
+        <div className="barrel">
           {items.map((skill, i) => (
-            <div key={skill} className={`skill ${i === frontIndex ? "skill-active" : ""}`}>
+            <div
+              key={skill}
+              ref={(el) => {
+                itemRefs.current[i] = el;
+              }}
+              className={`skill ${i === frontIndex ? "skill-active" : ""}`}
+            >
               {skill}
             </div>
           ))}
