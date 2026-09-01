@@ -5,9 +5,9 @@ import "./BenName.css";
 // Drop your own images in /public and point these at them —
 // one per letter, shown while the mouse is over that letter.
 const LETTERS: { char: string; image: string }[] = [
-  { char: "B", image: "public/BEN/Copy of Ben Baxandall- Portfolio (6).png" },
-  { char: "E", image: "public/BEN/Copy of Ben Baxandall- Portfolio (7).png" },
-  { char: "N", image: "public/BEN/Copy of Ben Baxandall- Portfolio (8).png" },
+  { char: "B", image: "BEN/Copy of Ben Baxandall- Portfolio (6).png" },
+  { char: "E", image: "BEN/Copy of Ben Baxandall- Portfolio (7).png" },
+  { char: "N", image: "BEN/Copy of Ben Baxandall- Portfolio (8).png" },
 ];
 
 export default function BenName() {

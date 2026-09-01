@@ -24,11 +24,15 @@ const RADIUS = 100; // px from the ring centre to each card
 const AUTO_SPEED = 4; // degrees per second while idle
 const DRAG_DEG_PER_PX = 0.25;
 const RESUME_DELAY_MS = 1200;
+const SPIRAL_RISE = 28; // px of vertical climb per card — this is what makes it a spiral, not a flat ring
+const VIEW_TILT = 55; // degrees — how far we look "down into" the spiral
 
 /**
- * A true 3D infinite carousel: cards sit on the surface of a cylinder and
- * the whole ring is rotated with GSAP. Because it is a ring, spinning it
- * forever in either direction never runs out of cards.
+ * A 3D spiral carousel: cards sit on the surface of a cylinder, each one
+ * risen slightly higher than the last, and the whole thing is viewed from
+ * an angled-down perspective so it reads as a spiral staircase rather than
+ * a flat ring. Cards on the far side naturally show their mirrored back —
+ * that's just CSS's default backface behaviour, left untouched on purpose.
  */
 export default function ProjectGallery({
   onSelect,
@@ -65,7 +69,7 @@ export default function ProjectGallery({
       const angle = ((i * step + rotation.current) % 360 + 360) % 360;
       const facing = Math.cos((angle * Math.PI) / 180); // 1 = front, -1 = back
       gsap.set(el, {
-        opacity: gsap.utils.clamp(0.12, 1, 0.2 + facing * 0.9),
+        opacity: gsap.utils.clamp(0.25, 1, 0.35 + facing * 0.75), // raised the floor so back cards stay visible/legible, just dimmer
         filter: `brightness(${gsap.utils.clamp(0.4, 1.1, 0.55 + facing * 0.55)})`,
       });
     });
@@ -79,10 +83,17 @@ export default function ProjectGallery({
   };
 
   useLayoutEffect(() => {
+    // Centre the rise so the spiral sits symmetrically rather than climbing
+    // off to one side
+    const midOffset = ((n - 1) * SPIRAL_RISE) / 2;
     cardRefs.current.forEach((el, i) => {
-      // FIX: was `-i * step`, which put each card at the opposite angle from
-      // what the opacity/index math above assumes. Now both agree.
-      if (el) gsap.set(el, { rotationY: i * step, z: RADIUS, transformOrigin: `50% 50% ${-RADIUS}px` });
+      if (el)
+        gsap.set(el, {
+          rotationY: i * step,
+          z: RADIUS,
+          y: i * SPIRAL_RISE - midOffset,
+          transformOrigin: `50% 50% ${-RADIUS}px`,
+        });
     });
     render();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -159,20 +170,24 @@ export default function ProjectGallery({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        <div className="carousel-ring" ref={ringRef}>
-          {PROJECTS.map((project, i) => (
-            <div
-              key={project.id}
-              className={`carousel-card ${i === activeIndex ? "is-active" : ""}`}
-              ref={(el) => {
-                cardRefs.current[i] = el;
-              }}
-              onClick={() => goTo(i)}
-            >
-              <img src={project.thumb} alt={project.title} loading="lazy" />
-              <span className="carousel-card-title">{project.title}</span>
-            </div>
-          ))}
+        {/* Static tilt so we're looking down into the spiral. The ring inside
+            still spins freely on its own rotationY, independent of this. */}
+        <div className="carousel-tilt">
+          <div className="carousel-ring" ref={ringRef}>
+            {PROJECTS.map((project, i) => (
+              <div
+                key={project.id}
+                className={`carousel-card ${i === activeIndex ? "is-active" : ""}`}
+                ref={(el) => {
+                  cardRefs.current[i] = el;
+                }}
+                onClick={() => goTo(i)}
+              >
+                <img src={project.thumb} alt={project.title} loading="lazy" />
+                <span className="carousel-card-title">{project.title}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

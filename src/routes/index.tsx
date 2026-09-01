@@ -121,6 +121,14 @@ function Index() {
       onPointerCancel={release}
       className="relative h-screen w-full touch-none overflow-hidden bg-background text-foreground select-none"
     >
+
+      <button
+        onClick={() => set(wallHeightRef.current - window.innerHeight)}
+        className="fixed top-6 right-6 z-50 rounded-full border border-border px-5 py-2 text-xs tracking-widest text-muted-foreground transition hover:border-warm hover:text-warm"
+      >
+        ↓ GO TO BOTTOM
+      </button>
+
       <Sunset t={p} />
 
       {/* drifting haze for a bit of life */}
