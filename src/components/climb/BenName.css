@@ -1,0 +1,38 @@
+.ben-name {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.2rem, 1.4vw, 1.4rem);
+  perspective: 900px;
+}
+
+.ben-letter {
+  position: relative;
+  display: block;
+  width: clamp(5.5rem, 17vw, 15rem);
+  height: clamp(6.5rem, 20vw, 18rem);
+  cursor: pointer;
+}
+
+.ben-glyph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(6rem, 20vw, 18rem);
+  line-height: 0.82;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+}
+
+.ben-image {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.15);
+  background-size: cover;
+  background-position: center;
+  border-radius: 0.6rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
