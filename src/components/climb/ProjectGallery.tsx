@@ -88,10 +88,13 @@ export default function ProjectGallery({
     cardRefs.current.forEach((el, i) => {
       if (el)
         gsap.set(el, {
+          // Only GSAP-managed transform properties here — a plain `transform`
+          // string alongside these fights over who owns the element's
+          // transform, and was silently dropping the y (spiral) offset.
           rotationY: i * step,
           z: RADIUS,
           y: i * SPIRAL_RISE - midOffset,
-          transform: `rotateY(${i * step}deg) translateZ(${RADIUS}px)`,
+          transformOrigin: `50% 50% ${-RADIUS}px`,
         });
     });
     render();
