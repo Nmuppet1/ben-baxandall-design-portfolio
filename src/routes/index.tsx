@@ -6,6 +6,9 @@ import { generateHolds } from "@/components/climb/holds";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
 import ProjectGallery, { PROJECTS, type Project } from "@/components/climb/ProjectGallery";
 import ProjectStory from "@/components/climb/ProjectStory";
+import BenName from "@/components/climb/BenName";
+import Reveal from "@/components/climb/Reveal";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
