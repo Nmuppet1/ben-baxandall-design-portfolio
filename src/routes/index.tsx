@@ -123,7 +123,7 @@ function Index() {
     >
 
       <button
-        onClick={() => set(wallHeightRef.current - window.innerHeight)}
+        onClick={() => set(maxClimb)}
         className="fixed top-6 right-6 z-50 rounded-full border border-border px-5 py-2 text-xs tracking-widest text-muted-foreground transition hover:border-warm hover:text-warm"
       >
         ↓ GO TO BOTTOM
