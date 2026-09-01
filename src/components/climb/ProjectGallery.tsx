@@ -15,10 +15,10 @@ export type Project = {
 
 // Swap in your real projects
 export const PROJECTS: Project[] = [
-  { id: "p1", title: "Project One", thumb: "/images/project1-square.jpg", description: "Description of project one.", images: ["/images/project1-1.jpg", "/images/project1-2.jpg"] },
-  { id: "p2", title: "Project Two", thumb: "/images/project2-square.jpg", description: "Description of project two.", images: ["/images/project2-1.jpg"] },
-  { id: "p3", title: "Project Three", thumb: "/images/project3-square.jpg", description: "Description of project three.", images: ["/images/project3-1.jpg"] },
-  { id: "p4", title: "Project Four", thumb: "/images/project4-square.jpg", description: "Description of project four.", images: ["/images/project4-1.jpg"] },
+  { id: "p1", title: "Project One", thumb: "public/elec/PID.png", description: "Description of project one.", images: ["public/elec/PID.png", "public/elec/PID.png"] },
+  { id: "p2", title: "Project Two", thumb: "public/elec/PID.png", description: "Description of project two.", images: ["public/elec/PID.png", "public/elec/PID.png"] },
+  { id: "p3", title: "Project Three", thumb: "public/elec/PID.png", description: "Description of project three.", images: ["public/elec/PID.png", "public/elec/PID.png"] },
+  { id: "p4", title: "Project Four", thumb: "public/elec/PID.png", description: "Description of project four.", images: ["public/elec/PID.png", "public/elec/PID.png"] },
 ];
 
 const SPACING = 0.1;
