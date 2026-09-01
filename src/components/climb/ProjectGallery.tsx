@@ -20,7 +20,7 @@ export const PROJECTS: Project[] = [
   { id: "p6", title: "Project Six", thumb: "/elec/PID.png", description: "Description of project six.", images: ["/elec/PID.png"] },
 ];
 
-const RADIUS = 460; // px from the ring centre to each card
+const RADIUS = 100; // px from the ring centre to each card
 const AUTO_SPEED = 4; // degrees per second while idle
 const DRAG_DEG_PER_PX = 0.25;
 const RESUME_DELAY_MS = 1200;
@@ -30,7 +30,15 @@ const RESUME_DELAY_MS = 1200;
  * the whole ring is rotated with GSAP. Because it is a ring, spinning it
  * forever in either direction never runs out of cards.
  */
-export default function ProjectGallery({ onSelect }: { onSelect: (project: Project) => void }) {
+export default function ProjectGallery({
+  onSelect,
+  autoSpinPaused = false,
+}: {
+  onSelect: (project: Project) => void;
+  /** Pass true while something else (e.g. the story panel below) is being dragged,
+   *  so the ring doesn't keep reassigning the active project mid-gesture. */
+  autoSpinPaused?: boolean;
+}) {
   const ringRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rotation = useRef(0); // degrees, grows/shrinks without limit
@@ -48,7 +56,10 @@ export default function ProjectGallery({ onSelect }: { onSelect: (project: Proje
     if (!ring) return;
     gsap.set(ring, { rotationY: rotation.current });
 
-    // Fade/dim the cards facing away so the ring reads as depth, not clutter
+    // Fade/dim the cards facing away so the ring reads as depth, not clutter.
+    // This must use the SAME angle formula as each card's own base rotation
+    // below, or the "front" the math thinks it sees won't match what's
+    // actually rendered facing the camera.
     cardRefs.current.forEach((el, i) => {
       if (!el) return;
       const angle = ((i * step + rotation.current) % 360 + 360) % 360;
@@ -69,16 +80,18 @@ export default function ProjectGallery({ onSelect }: { onSelect: (project: Proje
 
   useLayoutEffect(() => {
     cardRefs.current.forEach((el, i) => {
-      if (el) gsap.set(el, { rotationY: -i * step, z: RADIUS, transformOrigin: `50% 50% ${-RADIUS}px` });
+      // FIX: was `-i * step`, which put each card at the opposite angle from
+      // what the opacity/index math above assumes. Now both agree.
+      if (el) gsap.set(el, { rotationY: i * step, z: RADIUS, transformOrigin: `50% 50% ${-RADIUS}px` });
     });
     render();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Idle auto-spin
+  // Idle auto-spin — now also respects the externally-controlled pause
   useEffect(() => {
     const tick = () => {
-      if (!drag.current.active && performance.now() >= resumeAt.current) {
+      if (!drag.current.active && !autoSpinPaused && performance.now() >= resumeAt.current) {
         rotation.current -= (AUTO_SPEED * (gsap.ticker.deltaRatio() * 1)) / 60;
         render();
       }
@@ -86,7 +99,7 @@ export default function ProjectGallery({ onSelect }: { onSelect: (project: Proje
     gsap.ticker.add(tick);
     return () => gsap.ticker.remove(tick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [autoSpinPaused]);
 
   const snap = () => {
     const target = Math.round(rotation.current / step) * step;
