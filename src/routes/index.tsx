@@ -4,8 +4,8 @@ import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
 import { generateHolds } from "@/components/climb/holds";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
-import NameMorph from "@/components/climb/NameMorph";
-import Projectscarousel from "@/components/climb/Projectscarousel";
+import ProjectGallery, { PROJECTS, type Project } from "@/components/climb/ProjectGallery";
+import ProjectStory from "@/components/climb/ProjectStory";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [active, setActive] = useState<Project>(PROJECTS[0]!);
   const [climb, setClimb] = useState(0);
   const [puffs, setPuffs] = useState<Puff[]>([]);
   const [wallHeight, setWallHeight] = useState(0);
@@ -168,7 +169,8 @@ function Index() {
         <IntroSection />
 
         <WallSection side="left">
-          { <Projectscarousel /> }
+            <ProjectGallery onSelect={setActive} />
+            <ProjectStory project={active} />
         </WallSection>
 
         <WallSection side="right">
@@ -202,7 +204,6 @@ function IntroSection() {
           className="text-5xl font-light tracking-tight md:text-7xl"
           style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
         >
-          <NameMorph />
           Ben Baxandall
         </h1>
         <p
