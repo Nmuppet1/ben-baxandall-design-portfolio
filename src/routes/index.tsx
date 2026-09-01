@@ -6,6 +6,9 @@ import { generateHolds } from "@/components/climb/holds";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
 import ProjectGallery, { PROJECTS, type Project } from "@/components/climb/ProjectGallery";
 import ProjectStory from "@/components/climb/ProjectStory";
+import BenName from "@/components/climb/BenName";
+import Reveal from "@/components/climb/Reveal";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -165,26 +168,49 @@ function Index() {
           />
         ))}
 
-        {/* sections, in climb order: intro, then Projects / Skills / Interests / Contact */}
+        {/* sections, in climb order: intro, Projects (centre stage),
+            then Skills / Interests / Contact alternating sides, and the
+            copyright right at the top of the climb */}
         <IntroSection />
 
-        <WallSection side="left">
-            <ProjectGallery onSelect={setActive} />
+        <WallSection side="center" wide>
+          <Reveal>
+            <header className="mb-6 text-center">
+              <h2 className="text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Spin the carousel to browse. Pick a project, then pull its story up to read more.
+              </p>
+            </header>
+          </Reveal>
+          <ProjectGallery onSelect={setActive} />
+          <Reveal delay={0.1}>
             <ProjectStory project={active} />
+          </Reveal>
         </WallSection>
 
         <WallSection side="right">
-          <h2 className="mb-8 text-3xl font-light">Skills</h2>
-          <SkillsBarrels />
+          <Reveal>
+            <h2 className="mb-3 text-3xl font-light">Skills</h2>
+            <p className="mb-8 ml-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Tools and techniques I reach for, grouped by discipline. Drag a barrel to cycle through.
+            </p>
+            <SkillsBarrels />
+          </Reveal>
         </WallSection>
 
         <WallSection side="left">
-          <InterestsSection />
+          <Reveal>
+            <InterestsSection />
+          </Reveal>
         </WallSection>
 
         <WallSection side="right">
-          <ContactSection />
+          <Reveal>
+            <ContactSection />
+          </Reveal>
         </WallSection>
+
+        <SiteFooter />
       </div>
 
       {/* height gauge */}
@@ -198,43 +224,55 @@ function Index() {
 
 function IntroSection() {
   return (
-    <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center pointer-events-none">
-      <div className="pointer-events-auto flex flex-col items-center gap-4">
-        <h1
-          className="text-5xl font-light tracking-tight md:text-7xl"
-          style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) both" }}
-        >
-          Ben Baxandall
-        </h1>
+    <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-8 px-6 text-center pointer-events-none">
+      <div className="pointer-events-auto flex flex-col items-center gap-6">
+        <BenName />
         <p
           className="max-w-md text-sm tracking-[0.25em] text-muted-foreground"
           style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 140ms both" }}
         >
-           I am an enthusiast in design, engineering and climbing. I love creating things that are both fun and functional. 
+          Ben Baxandall — Design &amp; Engineering
         </p>
         <p
-          className="mt-10 text-xs tracking-[0.3em] text-warm uppercase"
+          className="max-w-xl text-base leading-relaxed text-muted-foreground"
+          style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 560ms both" }}
+        >
+          An enthusiast in design, engineering and climbing — I love creating things that are both
+          fun and functional.
+        </p>
+        <p
+          className="mt-8 max-w-sm text-[0.65rem] leading-loose tracking-[0.3em] text-warm uppercase"
           style={{ animation: "breathe 3s ease-in-out infinite" }}
         >
-          This page has no scrollbars to give the sense of a true, tough climb. Pull on the holds to scale the page!
+          No scrollbars here. Pull on the holds to scale the page.
         </p>
       </div>
     </div>
   );
 }
 
-// Alternates a section's content block to the left or right edge of the
-// wall, mirroring the original align-left/align-right pattern: the
-// section itself lets clicks pass through to the holds behind it, and
-// only the content block re-enables pointer events.
-function WallSection({ side, children }: { side: "left" | "right"; children: React.ReactNode }) {
+// Places a section's content centrally or against the left/right edge of
+// the wall. The section itself lets clicks pass through to the holds
+// behind it; only the content block re-enables pointer events.
+function WallSection({
+  side,
+  wide = false,
+  children,
+}: {
+  side: "left" | "right" | "center";
+  wide?: boolean;
+  children: React.ReactNode;
+}) {
+  const align =
+    side === "center"
+      ? "mx-auto text-center"
+      : side === "left"
+        ? "mr-auto text-left"
+        : "ml-auto text-right";
+
   return (
-    <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-16">
-      <div
-        className={`pointer-events-auto w-full max-w-3xl ${
-          side === "left" ? "mr-auto text-left" : "ml-auto text-right"
-        }`}
-      >
+    <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-20">
+      <div className={`pointer-events-auto w-full ${wide ? "max-w-5xl" : "max-w-md"} ${align}`}>
         {children}
       </div>
     </section>
@@ -247,11 +285,12 @@ function InterestsSection() {
 
   return (
     <div>
-      <h2 className="mb-4 text-3xl font-light">Interests</h2>
-      <p className="mb-6 text-sm text-muted-foreground">
-        A few things I spend time on outside of design and engineering, influencing the way I approach challenges.
+      <h2 className="mb-3 text-3xl font-light">Interests</h2>
+      <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
+        A few things I spend time on outside of design and engineering — they shape how I approach a
+        problem.
       </p>
-      <ul className="flex flex-wrap justify-end gap-2">
+      <ul className="flex flex-wrap gap-2">
         {interests.map((i) => (
           <li key={i} className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
             {i}
@@ -261,6 +300,18 @@ function InterestsSection() {
     </div>
   );
 }
+
+function SiteFooter() {
+  return (
+    <footer className="relative z-20 flex w-full flex-col items-center gap-2 px-6 pb-16 pt-8 text-center">
+      <span className="block h-px w-16 bg-warm/40" />
+      <p className="text-[0.65rem] tracking-[0.3em] text-muted-foreground uppercase">
+        © {new Date().getFullYear()} Ben Baxandall. All rights reserved.
+      </p>
+    </footer>
+  );
+}
+
 
 function ContactSection() {
   return (
