@@ -20,12 +20,11 @@ export const PROJECTS: Project[] = [
   { id: "p6", title: "Project Six", thumb: "/elec/PID.png", description: "Description of project six.", images: ["/elec/PID.png"] },
 ];
 
-const RADIUS = 100; // px from the ring centre to each card
+const RADIUS = 280; // enough depth for the rear cards to remain visible around the cylinder
 const AUTO_SPEED = 4; // degrees per second while idle
 const DRAG_DEG_PER_PX = 0.25;
 const RESUME_DELAY_MS = 1200;
-const SPIRAL_RISE = 28; // px of vertical climb per card — this is what makes it a spiral, not a flat ring
-const VIEW_TILT = 55; // degrees — how far we look "down into" the spiral
+const SPIRAL_RISE = 12; // subtle rise keeps the ring dimensional without stacking the cards vertically
 
 /**
  * A 3D spiral carousel: cards sit on the surface of a cylinder, each one
@@ -92,7 +91,7 @@ export default function ProjectGallery({
           rotationY: i * step,
           z: RADIUS,
           y: i * SPIRAL_RISE - midOffset,
-          transformOrigin: `50% 50% ${-RADIUS}px`,
+          transform: `rotateY(${i * step}deg) translateZ(${RADIUS}px)`,
         });
     });
     render();
