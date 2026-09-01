@@ -5,7 +5,7 @@ import { Sunset } from "@/components/climb/Sunset";
 import { generateHolds } from "@/components/climb/holds";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
 import NameMorph from "@/components/climb/NameMorph";
-import ProjectsCarousel from "@/components/climb/Projectscarousel";
+import Projectscarousel from "@/components/climb/Projectscarousel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -168,7 +168,7 @@ function Index() {
         <IntroSection />
 
         <WallSection side="left">
-          { <ProjectsCarousel /> }
+          { <Projectscarousel /> }
         </WallSection>
 
         <WallSection side="right">

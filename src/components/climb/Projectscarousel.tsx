@@ -23,7 +23,7 @@ const PROJECTS: Project[] = [
 
 const CARD_WIDTH = 320; // px, include your own gap in this number
 
-export default function ProjectsCarousel({ progress = 1 }: { progress?: number }) {
+export default function Projectscarousel({ progress = 1 }: { progress?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
