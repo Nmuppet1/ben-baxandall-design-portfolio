@@ -30,13 +30,20 @@ export function generateHolds(height: number): Hold[] {
   if (height <= 0) return [];
   const count = Math.max(12, Math.floor(height / HOLD_SPACING));
 
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    x: 0.08 + Math.random() * 0.84,
-    y: EDGE_MARGIN + Math.random() * Math.max(height - EDGE_MARGIN * 2, 1),
-    size: 34 + Math.random() * 20,
-    rot: Math.random() * 36 - 18,
-    warm: Math.random() < 0.2,
-    clip: CLIP_SHAPES[Math.floor(Math.random() * CLIP_SHAPES.length)]!,
-  }));
+  return Array.from({ length: count }, (_, i) => {
+    // Keep holds in the left/right gutters so they never sit on top of a
+    // section's content.
+    const left = i % 2 === 0;
+    const x = left ? 0.025 + Math.random() * 0.075 : 0.9 + Math.random() * 0.075;
+
+    return {
+      id: i,
+      x,
+      y: EDGE_MARGIN + Math.random() * Math.max(height - EDGE_MARGIN * 2, 1),
+      size: 34 + Math.random() * 20,
+      rot: Math.random() * 36 - 18,
+      warm: Math.random() < 0.2,
+      clip: CLIP_SHAPES[Math.floor(Math.random() * CLIP_SHAPES.length)]!,
+    };
+  });
 }
