@@ -207,7 +207,7 @@ function IntroSection() {
           Ben Baxandall
         </h1>
         <p
-          className="max-w-md text-sm tracking-[0.25em] text-muted-foreground uppercase"
+          className="max-w-md text-sm tracking-[0.25em] text-muted-foreground"
           style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 140ms both" }}
         >
            I am an enthusiast in design, engineering and climbing. I love creating things that are both fun and functional. 
