@@ -8,6 +8,7 @@ import ProjectGallery, { PROJECTS, type Project } from "@/components/climb/Proje
 import ProjectStory from "@/components/climb/ProjectStory";
 import BenName from "@/components/climb/BenName";
 import Reveal from "@/components/climb/Reveal";
+import DrawOnClick from "@/components/climb/Drawonclick";
 
 
 export const Route = createFileRoute("/")({
@@ -209,6 +210,7 @@ function Index() {
         <WallSection side="left">
           <Reveal>
             <InterestsSection />
+            <DrawOnClick />
           </Reveal>
         </WallSection>
 
