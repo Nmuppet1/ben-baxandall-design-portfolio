@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable";
-import "./ProjectsCarousel.css";
+import "./Projectscarousel.css";
 
 gsap.registerPlugin(Draggable);
 
