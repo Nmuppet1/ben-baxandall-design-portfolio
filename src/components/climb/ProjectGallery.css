@@ -1,55 +1,93 @@
-.gallery {
+.carousel {
+  width: 100%;
+  user-select: none;
+}
+
+.carousel-stage {
   position: relative;
   width: 100%;
-  height: 22rem;
-  overflow: hidden;
+  height: 26rem;
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
 }
 
-.cards {
+.carousel-ring {
   position: absolute;
-  width: 14rem;
-  height: 14rem; /* square */
-  top: 45%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  padding: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
 }
 
-.cards li {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 14rem;
-  aspect-ratio: 1 / 1; /* uniform squares */
+.carousel-card {
   position: absolute;
-  top: 0;
-  left: 0;
-  background-size: cover;
-  background-position: center;
-  border-radius: 0.6rem;
-  cursor: grab;
+  width: 18rem;
+  height: 18rem;
+  margin-left: -9rem;
+  margin-top: -9rem;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: var(--card, #141414);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.65);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
-.cards li:active {
-  cursor: grabbing;
+.carousel-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
 }
 
-.card-title {
+.carousel-card.is-active {
+  outline: 1px solid var(--warm, #e2a33f);
+  outline-offset: -1px;
+}
+
+.carousel-card-title {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 1rem 0.9rem;
+  padding: 1.4rem 1rem 0.9rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: #f5f3ee;
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
-  border-radius: 0 0 0.6rem 0.6rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
   pointer-events: none;
 }
 
-.drag-proxy {
-  visibility: hidden;
-  position: absolute;
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.carousel-dots button {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.3;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.carousel-dots button.is-active {
+  opacity: 1;
+  transform: scale(1.6);
+  color: var(--warm, #e2a33f);
+}
+
+.carousel-hint {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  opacity: 0.45;
 }
