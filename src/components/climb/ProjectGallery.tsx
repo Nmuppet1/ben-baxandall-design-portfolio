@@ -24,7 +24,7 @@ const RADIUS = 280; // enough depth for the rear cards to remain visible around 
 const AUTO_SPEED = 4; // degrees per second while idle
 const DRAG_DEG_PER_PX = 0.25;
 const RESUME_DELAY_MS = 1200;
-const SPIRAL_RISE = 12; // subtle rise keeps the ring dimensional without stacking the cards vertically
+// Cards all sit on one level ring — no vertical stagger.
 
 /**
  * A 3D spiral carousel: cards sit on the surface of a cylinder, each one
@@ -82,18 +82,12 @@ export default function ProjectGallery({
   };
 
   useLayoutEffect(() => {
-    // Centre the rise so the spiral sits symmetrically rather than climbing
-    // off to one side
-    const midOffset = ((n - 1) * SPIRAL_RISE) / 2;
     cardRefs.current.forEach((el, i) => {
       if (el)
         gsap.set(el, {
-          // Only GSAP-managed transform properties here — a plain `transform`
-          // string alongside these fights over who owns the element's
-          // transform, and was silently dropping the y (spiral) offset.
           rotationY: i * step,
           z: RADIUS,
-          y: i * SPIRAL_RISE - midOffset,
+          y: 0,
           transformOrigin: `50% 50% ${-RADIUS}px`,
         });
     });
