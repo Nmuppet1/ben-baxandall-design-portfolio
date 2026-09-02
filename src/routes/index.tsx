@@ -258,7 +258,7 @@ function Index() {
 function IntroSection() {
   return (
     <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-8 px-6 text-center pointer-events-none">
-      <div className="pointer-events-auto flex flex-col items-center gap-6">
+      <div data-body className="pointer-events-auto flex flex-col items-center gap-6">
         <BenName />
         <p
           className="max-w-md text-sm tracking-[0.25em] text-muted-foreground"
