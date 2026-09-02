@@ -210,7 +210,6 @@ function Index() {
         <WallSection side="left">
           <Reveal>
             <InterestsSection />
-            <DrawOnClick />
           </Reveal>
         </WallSection>
 

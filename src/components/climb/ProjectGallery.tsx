@@ -12,12 +12,12 @@ export type Project = {
 
 // Swap in your real projects (drop images in /public and reference them as "/elec/PID.png")
 export const PROJECTS: Project[] = [
-  { id: "p1", title: "Project One", thumb: "/elec/PID.png", description: "Description of project one.", images: ["/elec/PID.png"] },
-  { id: "p2", title: "Project Two", thumb: "/elec/PID.png", description: "Description of project two.", images: ["/elec/PID.png"] },
-  { id: "p3", title: "Project Three", thumb: "/elec/PID.png", description: "Description of project three.", images: ["/elec/PID.png"] },
-  { id: "p4", title: "Project Four", thumb: "/elec/PID.png", description: "Description of project four.", images: ["/elec/PID.png"] },
-  { id: "p5", title: "Project Five", thumb: "/elec/PID.png", description: "Description of project five.", images: ["/elec/PID.png"] },
-  { id: "p6", title: "Project Six", thumb: "/elec/PID.png", description: "Description of project six.", images: ["/elec/PID.png"] },
+  { id: "p1", title: "PID Ball Balance", thumb: "/elec/PID.png", description: "Description of project one.", images: ["/elec/PID.png"] },
+  { id: "p2", title: "Dodgy Ballers Kit", thumb: "/kit/Copy of Ben Baxandall- Portfolio (9).png", description: "Description of project two.", images: ["/elec/PID.png"] },
+  { id: "p3", title: "Web Design", thumb: "/elec/PID.png", description: "Description of project three.", images: ["/elec/PID.png"] },
+  { id: "p4", title: "Animations", thumb: "/elec/PID.png", description: "Description of project four.", images: ["/elec/PID.png"] },
+  { id: "p5", title: "Climbing Board", thumb: "/elec/PID.png", description: "Description of project five.", images: ["/elec/PID.png"] },
+  { id: "p6", title: "Video Editing", thumb: "/elec/PID.png", description: "Description of project six.", images: ["/elec/PID.png"] },
 ];
 
 const RADIUS = 280; // enough depth for the rear cards to remain visible around the cylinder
