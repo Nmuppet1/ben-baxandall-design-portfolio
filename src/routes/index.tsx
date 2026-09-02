@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
-import { generateHolds } from "@/components/climb/holds";
+import { generateHolds, type Zone } from "@/components/climb/holds";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
 import ProjectGallery, { PROJECTS, type Project } from "@/components/climb/ProjectGallery";
 import ProjectStory from "@/components/climb/ProjectStory";
 import BenName from "@/components/climb/BenName";
 import Reveal from "@/components/climb/Reveal";
-import DrawOnClick from "@/components/climb/Drawonclick";
+import InterestDoodle from "@/components/climb/InterestDoodles";
 
 
 export const Route = createFileRoute("/")({
@@ -36,6 +36,7 @@ function Index() {
   const [climb, setClimb] = useState(0);
   const [puffs, setPuffs] = useState<Puff[]>([]);
   const [wallHeight, setWallHeight] = useState(0);
+  const [zones, setZones] = useState<Zone[]>([]);
 
   const climbRef = useRef(0);
   const wallHeightRef = useRef(0);
@@ -50,7 +51,23 @@ function Index() {
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) return;
-    const measure = () => setWallHeight(el.scrollHeight);
+    const measure = () => {
+      setWallHeight(el.scrollHeight);
+
+      // Rectangles occupied by real content, in wall coordinates, so holds
+      // can be scattered anywhere that isn't a section body.
+      const wall = el.getBoundingClientRect();
+      const next: Zone[] = Array.from(el.querySelectorAll<HTMLElement>("[data-body]")).map((b) => {
+        const r = b.getBoundingClientRect();
+        return {
+          x0: (r.left - wall.left) / wall.width,
+          x1: (r.right - wall.left) / wall.width,
+          y0: wall.bottom - r.bottom,
+          y1: wall.bottom - r.top,
+        };
+      });
+      setZones(next);
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
@@ -63,7 +80,14 @@ function Index() {
 
   // Round so a resize by a few px doesn't reshuffle every hold on screen
   const holdsHeightKey = Math.round(wallHeight / 50) * 50;
-  const holds = useMemo(() => generateHolds(holdsHeightKey), [holdsHeightKey]);
+  const zonesKey = zones
+    .map((z) => [z.x0, z.x1, z.y0, z.y1].map((v) => Math.round(v * 100) / 100).join(","))
+    .join("|");
+  const holds = useMemo(
+    () => generateHolds(holdsHeightKey, zones),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [holdsHeightKey, zonesKey],
+  );
 
   // physics loop: momentum + friction + a little gravity sag
   useEffect(() => {
@@ -197,20 +221,19 @@ function Index() {
           </Reveal>
         </WallSection>
 
-        <WallSection side="right">
+        <WallSection side="right" wide>
           <Reveal>
             <h2 className="mb-3 text-3xl font-light">Skills</h2>
-            <p className="mb-8 ml-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
+            <p className="mb-8 ml-auto max-w-md text-sm leading-relaxed text-muted-foreground">
               Tools and techniques I reach for, grouped by discipline. Drag a barrel to cycle through.
             </p>
             <SkillsBarrels />
           </Reveal>
         </WallSection>
 
-        <WallSection side="left">
+        <WallSection side="left" wide>
           <Reveal>
             <InterestsSection />
-            <DrawOnClick />
           </Reveal>
         </WallSection>
 
@@ -235,7 +258,7 @@ function Index() {
 function IntroSection() {
   return (
     <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-8 px-6 text-center pointer-events-none">
-      <div className="pointer-events-auto flex flex-col items-center gap-6">
+      <div data-body className="pointer-events-auto flex flex-col items-center gap-6">
         <BenName />
         <p
           className="max-w-md text-sm tracking-[0.25em] text-muted-foreground"
@@ -282,7 +305,10 @@ function WallSection({
 
   return (
     <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-20">
-      <div className={`pointer-events-auto w-full ${wide ? "max-w-5xl" : "max-w-md"} ${align}`}>
+      <div
+        data-body
+        className={`pointer-events-auto w-full ${wide ? "max-w-4xl" : "max-w-md"} ${align}`}
+      >
         {children}
       </div>
     </section>
@@ -292,18 +318,29 @@ function WallSection({
 function InterestsSection() {
   // Placeholder — swap these for your real interests
   const interests = ["Raspberry Pi", "3D Printing", "Animation", "Wild Swimming", "Football", "Running", "Cooking", "Guitar", "Reading"];
+  const [drawn, setDrawn] = useState<string | null>(null);
 
   return (
     <div>
       <h2 className="mb-3 text-3xl font-light">Interests</h2>
       <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
         A few things I spend time on outside of design and engineering — they shape how I approach a
-        problem.
+        problem. Click one to draw it.
       </p>
-      <ul className="flex flex-wrap gap-2">
+      <ul className="flex flex-wrap items-center gap-2">
         {interests.map((i) => (
-          <li key={i} className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-            {i}
+          <li key={i} className="flex items-center gap-2">
+            <button
+              onClick={() => setDrawn(i)}
+              className={`rounded-full border px-3 py-1 text-xs transition ${
+                drawn === i
+                  ? "border-warm text-warm"
+                  : "border-border text-muted-foreground hover:border-warm hover:text-warm"
+              }`}
+            >
+              {i}
+            </button>
+            {drawn === i && <InterestDoodle key={i} name={i} />}
           </li>
         ))}
       </ul>
