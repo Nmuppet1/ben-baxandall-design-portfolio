@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
-import { generateHolds } from "@/components/climb/holds";
+import { generateHolds, type Zone } from "@/components/climb/holds";
 import SkillsBarrels from "@/components/climb/SkillsBarrels";
 import ProjectGallery, { PROJECTS, type Project } from "@/components/climb/ProjectGallery";
 import ProjectStory from "@/components/climb/ProjectStory";
 import BenName from "@/components/climb/BenName";
 import Reveal from "@/components/climb/Reveal";
-import DrawOnClick from "@/components/climb/Drawonclick";
+import InterestDoodle from "@/components/climb/InterestDoodles";
 
 
 export const Route = createFileRoute("/")({
