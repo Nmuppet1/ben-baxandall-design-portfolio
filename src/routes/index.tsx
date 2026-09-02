@@ -51,7 +51,23 @@ function Index() {
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) return;
-    const measure = () => setWallHeight(el.scrollHeight);
+    const measure = () => {
+      setWallHeight(el.scrollHeight);
+
+      // Rectangles occupied by real content, in wall coordinates, so holds
+      // can be scattered anywhere that isn't a section body.
+      const wall = el.getBoundingClientRect();
+      const next: Zone[] = Array.from(el.querySelectorAll<HTMLElement>("[data-body]")).map((b) => {
+        const r = b.getBoundingClientRect();
+        return {
+          x0: (r.left - wall.left) / wall.width,
+          x1: (r.right - wall.left) / wall.width,
+          y0: wall.bottom - r.bottom,
+          y1: wall.bottom - r.top,
+        };
+      });
+      setZones(next);
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
@@ -64,7 +80,14 @@ function Index() {
 
   // Round so a resize by a few px doesn't reshuffle every hold on screen
   const holdsHeightKey = Math.round(wallHeight / 50) * 50;
-  const holds = useMemo(() => generateHolds(holdsHeightKey), [holdsHeightKey]);
+  const zonesKey = zones
+    .map((z) => [z.x0, z.x1, z.y0, z.y1].map((v) => Math.round(v * 100) / 100).join(","))
+    .join("|");
+  const holds = useMemo(
+    () => generateHolds(holdsHeightKey, zones),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [holdsHeightKey, zonesKey],
+  );
 
   // physics loop: momentum + friction + a little gravity sag
   useEffect(() => {
