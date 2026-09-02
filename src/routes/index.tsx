@@ -36,6 +36,7 @@ function Index() {
   const [climb, setClimb] = useState(0);
   const [puffs, setPuffs] = useState<Puff[]>([]);
   const [wallHeight, setWallHeight] = useState(0);
+  const [zones, setZones] = useState<Zone[]>([]);
 
   const climbRef = useRef(0);
   const wallHeightRef = useRef(0);
