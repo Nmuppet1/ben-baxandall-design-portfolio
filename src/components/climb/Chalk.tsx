@@ -1,3 +1,6 @@
+import { useLayoutEffect, useRef } from "react";
+import { gsap } from "gsap";
+
 export type Puff = {
   id: number;
   left: string;
@@ -5,70 +8,74 @@ export type Puff = {
   seed: number;
 };
 
-/** A burst of chalk dust left behind on a hold that was grabbed. */
+const PARTICLES = 22;
+
+/** A burst of chalk dust that blooms right on the hold that was grabbed. */
 export function ChalkPuff({ puff }: { puff: Puff }) {
+  const root = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const el = root.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline();
+
+      tl.fromTo(
+        ".chalk-cloud",
+        { scale: 0.3, opacity: 0.85 },
+        {
+          scale: 2.1,
+          opacity: 0,
+          duration: 1.25,
+          ease: "power2.out",
+          stagger: 0.06,
+        },
+        0,
+      );
+
+      gsap.utils.toArray<HTMLElement>(".chalk-dot").forEach((dot, i) => {
+        const ang = (i / PARTICLES) * Math.PI * 2 + puff.seed;
+        const dist = 18 + Math.random() * 55;
+        tl.fromTo(
+          dot,
+          { x: 0, y: 0, scale: 1, opacity: 0.9 },
+          {
+            x: Math.cos(ang) * dist,
+            y: Math.sin(ang) * dist * 0.7 - 14 - Math.random() * 18,
+            scale: 0.2,
+            opacity: 0,
+            duration: 0.9 + Math.random() * 0.7,
+            ease: "power2.out",
+          },
+          0.02 * i * 0.5,
+        );
+      });
+    }, el);
+
+    return () => ctx.revert();
+  }, [puff.seed]);
+
   return (
     <div
-      className="pointer-events-none absolute"
-      style={{ left: puff.left, bottom: puff.bottom }}
+      ref={root}
+      className="pointer-events-none absolute z-30"
+      style={{ left: puff.left, bottom: puff.bottom, width: 0, height: 0 }}
       aria-hidden
     >
-      {/* Main chalk cloud */}
-      <div
-        className="absolute h-14 w-14 rounded-full bg-chalk/25 blur-lg"
-        style={{
-          transform: "translate(-50%, 50%)",
-          animation: "chalk-cloud 1200ms ease-out forwards",
-        }}
-      />
+      <div className="absolute -translate-x-1/2 translate-y-1/2">
+        <div className="chalk-cloud absolute h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-chalk/30 blur-lg" />
+        <div className="chalk-cloud absolute h-8 w-8 -translate-x-1/4 -translate-y-1/3 rounded-full bg-chalk/25 blur-md" />
+        <div className="chalk-cloud absolute h-6 w-6 -translate-x-3/4 -translate-y-1/4 rounded-full bg-chalk/25 blur-md" />
 
-      {/* Smaller clouds */}
-      <div
-        className="absolute h-8 w-8 rounded-full bg-chalk/20 blur-md"
-        style={{
-          transform: "translate(-80%, 20%)",
-          animation: "chalk-cloud 1000ms ease-out 40ms forwards",
-        }}
-      />
-
-      <div
-        className="absolute h-6 w-6 rounded-full bg-chalk/20 blur-md"
-        style={{
-          transform: "translate(20%, 10%)",
-          animation: "chalk-cloud 900ms ease-out 80ms forwards",
-        }}
-      />
-
-      {/* Individual chalk particles */}
-      {Array.from({ length: 16 }, (_, i) => {
-        const ang =
-          (i / 16) * Math.PI * 2 +
-          puff.seed +
-          (Math.random() - 0.5) * 0.5;
-
-        const dist = 20 + Math.random() * 45;
-        const size = 2 + Math.random() * 4;
-
-        return (
+        {Array.from({ length: PARTICLES }, (_, i) => (
           <span
             key={i}
-            className="absolute block rounded-full bg-chalk"
-            style={
-              {
-                width: size,
-                height: size,
-                opacity: 0.5 + Math.random() * 0.5,
-                transform: "translate(-50%, 50%)",
-                "--dx": `${Math.cos(ang) * dist}px`,
-                "--dy": `${-Math.abs(Math.sin(ang)) * dist - 8}px`,
-                animation: `chalk-particle ${
-                  700 + Math.random() * 700
-                }ms cubic-bezier(.2,.7,.3,1) forwards`,
-              } as React.CSSProperties
-            }
+            className="chalk-dot absolute block -translate-x-1/2 -translate-y-1/2 rounded-full bg-chalk"
+            style={{ width: 2 + Math.random() * 4, height: 2 + Math.random() * 4 }}
           />
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 }
