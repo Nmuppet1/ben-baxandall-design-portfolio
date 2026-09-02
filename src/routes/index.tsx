@@ -221,20 +221,19 @@ function Index() {
           </Reveal>
         </WallSection>
 
-        <WallSection side="right">
+        <WallSection side="right" wide>
           <Reveal>
             <h2 className="mb-3 text-3xl font-light">Skills</h2>
-            <p className="mb-8 ml-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
+            <p className="mb-8 ml-auto max-w-md text-sm leading-relaxed text-muted-foreground">
               Tools and techniques I reach for, grouped by discipline. Drag a barrel to cycle through.
             </p>
             <SkillsBarrels />
           </Reveal>
         </WallSection>
 
-        <WallSection side="left">
+        <WallSection side="left" wide>
           <Reveal>
             <InterestsSection />
-            <DrawOnClick />
           </Reveal>
         </WallSection>
 
@@ -306,7 +305,10 @@ function WallSection({
 
   return (
     <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-20">
-      <div className={`pointer-events-auto w-full ${wide ? "max-w-5xl" : "max-w-md"} ${align}`}>
+      <div
+        data-body
+        className={`pointer-events-auto w-full ${wide ? "max-w-4xl" : "max-w-md"} ${align}`}
+      >
         {children}
       </div>
     </section>
@@ -316,18 +318,29 @@ function WallSection({
 function InterestsSection() {
   // Placeholder — swap these for your real interests
   const interests = ["Raspberry Pi", "3D Printing", "Animation", "Wild Swimming", "Football", "Running", "Cooking", "Guitar", "Reading"];
+  const [drawn, setDrawn] = useState<string | null>(null);
 
   return (
     <div>
       <h2 className="mb-3 text-3xl font-light">Interests</h2>
       <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
         A few things I spend time on outside of design and engineering — they shape how I approach a
-        problem.
+        problem. Click one to draw it.
       </p>
-      <ul className="flex flex-wrap gap-2">
+      <ul className="flex flex-wrap items-center gap-2">
         {interests.map((i) => (
-          <li key={i} className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-            {i}
+          <li key={i} className="flex items-center gap-2">
+            <button
+              onClick={() => setDrawn(i)}
+              className={`rounded-full border px-3 py-1 text-xs transition ${
+                drawn === i
+                  ? "border-warm text-warm"
+                  : "border-border text-muted-foreground hover:border-warm hover:text-warm"
+              }`}
+            >
+              {i}
+            </button>
+            {drawn === i && <InterestDoodle key={i} name={i} />}
           </li>
         ))}
       </ul>
