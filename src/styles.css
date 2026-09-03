@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Frauces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -17,6 +18,13 @@
  * 1. Add the variable to :root (light value) and .dark (dark value)
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
+
+ @layer base {
+  #lovable-badge {
+    display: none !important;
+  }
+}
+
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -145,6 +153,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: "Frauces", serif;
   }
 }
 

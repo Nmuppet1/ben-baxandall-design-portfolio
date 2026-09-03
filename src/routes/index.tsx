@@ -14,7 +14,7 @@ import InterestDoodle from "@/components/climb/InterestDoodles";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ben — Design Portfolio" },
+      { title: "Ben Baxandall — Design Portfolio" },
       {
         name: "description",
         content: " Pull on the holds to climb the page",
@@ -209,11 +209,9 @@ function Index() {
         <WallSection side="center" wide>
           <Reveal>
             <header className="mb-10 text-center">
-              <p className="mb-3 text-[0.6rem] tracking-[0.35em] text-warm uppercase">Selected work</p>
               <h2 className="text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
               <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Drag the ring to spin through my projects, then pull the grip below to climb into
-                the full story.
+                Drag to spin through my projects. Scroll to reveal the details.
               </p>
             </header>
           </Reveal>

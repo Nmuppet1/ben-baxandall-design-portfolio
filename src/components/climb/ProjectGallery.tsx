@@ -10,7 +10,6 @@ export type Project = {
   images: string[]; // full story photos, natural aspect ratio
 };
 
-// Swap in your real projects (drop images in /public and reference them as "/elec/PID.png")
 export const PROJECTS: Project[] = [
   { id: "p1", title: "PID Ball Balance", thumb: "/elec/e1.png", description: "The objective in this project was to investigate PID systems, as control loops were not covered in detail in my degree. The idea was to create a PID system which learns to balance a ball on a small rail. From some initial sketches and learning about the uses of PID, I created a control loop diagram to guide the programming process. A prototype was created using an ultrasonic sensor to calculate where  the ball was and a servo to tilt the rail. Using iterative design, I altered the PID constants and sent them through the Arduino until the system was optimised. With the serial plotter on the arduino, I could calibrate the ultrasonic sensor to ensure correct measurements. ", images: ["/elec/e2.png", "/elec/e3.png", "/elec/e4.png"] },
   { id: "p2", title: "Dodgy Ballers Kit", thumb: "/kit/k2.png", description: "As kit and equipment secretary of the University Dodgeball team, I designed the team kit with professional supplier, Scimitar. Through iterative design and team feedback, I developed a kit tailored to the team, while also strengthening my design skills, especially within Canva.", images: ["/kit/k1.png", "/kit/k3.png", "/kit/k4.png"] },
@@ -24,28 +23,19 @@ const RADIUS = 280; // enough depth for the rear cards to remain visible around 
 const AUTO_SPEED = 0; // idle auto-spin disabled so projects stay readable
 const DRAG_DEG_PER_PX = 0.25;
 const RESUME_DELAY_MS = 1200;
-// Cards all sit on one level ring — no vertical stagger.
+const FLING_FACTOR = 5.5; // how much release velocity carries the spin onward before it snaps
 
-/**
- * A 3D spiral carousel: cards sit on the surface of a cylinder, each one
- * risen slightly higher than the last, and the whole thing is viewed from
- * an angled-down perspective so it reads as a spiral staircase rather than
- * a flat ring. Cards on the far side naturally show their mirrored back —
- * that's just CSS's default backface behaviour, left untouched on purpose.
- */
 export default function ProjectGallery({
   onSelect,
   autoSpinPaused = false,
 }: {
   onSelect: (project: Project) => void;
-  /** Pass true while something else (e.g. the story panel below) is being dragged,
-   *  so the ring doesn't keep reassigning the active project mid-gesture. */
   autoSpinPaused?: boolean;
 }) {
   const ringRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const rotation = useRef(0); // degrees, grows/shrinks without limit
-  const drag = useRef({ active: false, startX: 0, startRot: 0 });
+  const rotation = useRef(0);
+  const drag = useRef({ active: false, startY: 0, startRot: 0, lastY: 0, lastT: 0, velocity: 0 });
   const resumeAt = useRef(0);
   const lastIndex = useRef(-1);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -59,17 +49,17 @@ export default function ProjectGallery({
     if (!ring) return;
     gsap.set(ring, { rotationY: rotation.current });
 
-    // Fade/dim the cards facing away so the ring reads as depth, not clutter.
-    // This must use the SAME angle formula as each card's own base rotation
-    // below, or the "front" the math thinks it sees won't match what's
-    // actually rendered facing the camera.
     cardRefs.current.forEach((el, i) => {
       if (!el) return;
       const angle = ((i * step + rotation.current) % 360 + 360) % 360;
       const facing = Math.cos((angle * Math.PI) / 180); // 1 = front, -1 = back
+      const isActive = i === activeIndex;
       gsap.set(el, {
-        opacity: gsap.utils.clamp(0.25, 1, 0.35 + facing * 0.75), // raised the floor so back cards stay visible/legible, just dimmer
+        opacity: gsap.utils.clamp(0.25, 1, 0.35 + facing * 0.75),
         filter: `brightness(${gsap.utils.clamp(0.4, 1.1, 0.55 + facing * 0.55)})`,
+        // small lift + scale on whichever card is currently front-and-centre,
+        // so it reads as "selected" rather than just brighter
+        scale: isActive ? 1.08 : 1,
       });
     });
 
@@ -95,7 +85,6 @@ export default function ProjectGallery({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Idle auto-spin is disabled — the ring only moves when the visitor drags it
   useEffect(() => {
     if (AUTO_SPEED === 0 || autoSpinPaused) return;
     const tick = () => {
@@ -123,14 +112,25 @@ export default function ProjectGallery({
 
   const onPointerDown = (e: React.PointerEvent) => {
     gsap.killTweensOf(rotation);
-    drag.current = { active: true, startX: e.clientX, startRot: rotation.current };
+    const now = performance.now();
+    drag.current = { active: true, startY: e.clientY, startRot: rotation.current, lastY: e.clientY, lastT: now, velocity: 0 };
     setGrabbing(true);
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (!drag.current.active) return;
-    rotation.current = drag.current.startRot + (e.clientX - drag.current.startX) * DRAG_DEG_PER_PX;
+    const now = performance.now();
+    const dt = Math.max(now - drag.current.lastT, 1);
+
+    // pulling DOWN spins the ring forward — matches the pull-to-explore
+    // gesture used everywhere else on the site
+    rotation.current = drag.current.startRot + (e.clientY - drag.current.startY) * DRAG_DEG_PER_PX;
+
+    drag.current.velocity = ((e.clientY - drag.current.lastY) * DRAG_DEG_PER_PX) / dt; // deg per ms
+    drag.current.lastY = e.clientY;
+    drag.current.lastT = now;
+
     render();
   };
 
@@ -138,6 +138,9 @@ export default function ProjectGallery({
     if (!drag.current.active) return;
     drag.current.active = false;
     setGrabbing(false);
+    // carry a bit of the release velocity onward before settling — gives it
+    // some weight/momentum instead of stopping dead where you let go
+    rotation.current += drag.current.velocity * FLING_FACTOR * 16;
     snap();
   };
 
@@ -145,7 +148,6 @@ export default function ProjectGallery({
     gsap.killTweensOf(rotation);
     const current = rotation.current;
     const target = -i * step;
-    // take the shortest way round the ring
     const delta = ((target - current + 180) % 360 + 360) % 360 - 180;
     gsap.to(rotation, {
       current: current + delta,
@@ -167,8 +169,6 @@ export default function ProjectGallery({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        {/* Static tilt so we're looking down into the spiral. The ring inside
-            still spins freely on its own rotationY, independent of this. */}
         <div className="carousel-tilt">
           <div className="carousel-ring" ref={ringRef}>
             {PROJECTS.map((project, i) => (
@@ -198,7 +198,7 @@ export default function ProjectGallery({
           />
         ))}
       </div>
-      <p className="carousel-hint">drag to spin</p>
+      <p className="carousel-hint">↓ pull down to browse</p>
     </div>
   );
 }
