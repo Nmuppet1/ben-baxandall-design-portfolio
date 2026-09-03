@@ -211,7 +211,7 @@ function Index() {
             <header className="mb-6 text-center">
               <h2 className="text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Spin the carousel to browse. Pick a project, then pull its story up to read more.
+                Spin to see a few of my projects, a description will appear below each.
               </p>
             </header>
           </Reveal>
@@ -225,7 +225,7 @@ function Index() {
           <Reveal>
             <h2 className="mb-3 text-3xl font-light">Skills</h2>
             <p className="mb-8 ml-auto max-w-md text-sm leading-relaxed text-muted-foreground">
-              Tools and techniques I reach for, grouped by discipline. Drag a barrel to cycle through.
+              A few tools and techniques I have picked up along the way. Drag each to cycle through my skills.
             </p>
             <SkillsBarrels />
           </Reveal>
@@ -270,14 +270,14 @@ function IntroSection() {
           className="max-w-xl text-base leading-relaxed text-muted-foreground"
           style={{ animation: "rise-in 900ms cubic-bezier(.16,1,.3,1) 560ms both" }}
         >
-          An enthusiast in design, engineering and climbing — I love creating things that are both
+          An enthusiast in design, engineering and climbing. I love creating things that are both
           fun and functional.
         </p>
         <p
           className="mt-8 max-w-sm text-[0.65rem] leading-loose tracking-[0.3em] text-warm uppercase"
           style={{ animation: "breathe 3s ease-in-out infinite" }}
         >
-          No scrollbars here. Pull on the holds to scale the page.
+          There are no scrollbars here to give the sense of a real climb. Pull on the holds to scale the page.
         </p>
       </div>
     </div>
@@ -324,8 +324,7 @@ function InterestsSection() {
     <div>
       <h2 className="mb-3 text-3xl font-light">Interests</h2>
       <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
-        A few things I spend time on outside of design and engineering — they shape how I approach a
-        problem. Click one to draw it.
+        A few things I spend my time on outside of design and engineering — they shape how I approach problem solving. Click on one to see its animation.
       </p>
       <ul className="flex flex-wrap items-center gap-2">
         {interests.map((i) => (
@@ -364,7 +363,7 @@ function ContactSection() {
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-light">Contact</h2>
-      <p className="text-sm text-muted-foreground">Feel free to reach out and say hello!</p>
+      <p className="text-sm text-muted-foreground">Feel free to reach out or just say hello!</p>
       <a
         className="text-lg text-warm underline underline-offset-4"
         href="mailto:benbaxandall@btinternet.com"
