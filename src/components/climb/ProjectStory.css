@@ -1,28 +1,69 @@
 .project-story {
   position: relative;
-  width: min(90vw, 500px);
+  width: min(92vw, 640px);
   margin: 0 auto;
   text-align: center;
 }
 
-.story-hint {
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  color: var(--line-color, #2b2b28);
-  opacity: 0.7;
-  margin-bottom: 0.5rem;
+/* Visible rope grip you actually pull on */
+.story-grip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 1rem;
+  margin-bottom: 0.75rem;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.story-grip:hover {
+  border-color: var(--warm);
+  transform: translateY(-2px);
+}
+
+.story-grip:active {
+  cursor: grabbing;
+}
+
+.story-grip-bar {
+  width: 4.5rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--warm);
+  opacity: 0.9;
+}
+
+.story-grip-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.story-grip-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--warm);
+  transform-origin: left center;
+  transform: scaleX(0);
 }
 
 .story-viewport {
   position: relative;
-  height: 420px;
+  height: 440px;
   overflow: hidden;
-  cursor: grab;
-  touch-action: none;
-}
-
-.story-viewport:active {
-  cursor: grabbing;
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 100%);
 }
 
 .story-content {
@@ -32,21 +73,49 @@
   width: 100%;
   display: flex;
   flex-direction: column-reverse; /* first child = bottom = visible at rest */
+  gap: 1rem;
 }
 
 .story-card {
   width: 100%;
-  padding: 2rem;
+  padding: 1.25rem 1.5rem;
   box-sizing: border-box;
 }
 
-.story-description h3 {
-  margin: 0 0 0.75rem;
+.story-description {
+  text-align: left;
+  border-radius: 0.9rem;
+  background: color-mix(in oklch, var(--card) 80%, transparent);
+  border: 1px solid var(--border);
 }
 
+.story-description h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.story-description p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+}
+
+.story-image {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+
+/* keep gifs / tall images whole instead of cropping them */
 .story-image img {
-  width: 100%;
+  max-width: 100%;
+  max-height: 360px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   display: block;
-  border-radius: 0.4rem;
+  border-radius: 0.6rem;
   pointer-events: none;
 }
