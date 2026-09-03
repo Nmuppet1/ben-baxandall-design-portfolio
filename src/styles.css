@@ -148,7 +148,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: "Frauces", serif;
+    /* font-family: "Frauces", serif; */
   }
 }
 
