@@ -19,11 +19,6 @@
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
 
- @layer base {
-  #lovable-badge {
-    display: none !important;
-  }
-}
 
 
 @theme inline {
