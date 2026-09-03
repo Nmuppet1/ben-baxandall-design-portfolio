@@ -36,8 +36,10 @@ export default function ProjectStory({ project }: { project: Project }) {
   }, [project.id]);
 
   useLayoutEffect(() => {
+    // content is bottom-aligned; pulling up translates it DOWN to reveal
+    // the images stacked above the description
     gsap.to(contentRef.current, {
-      y: -(maxPull - Math.min(pull, maxPull)),
+      y: Math.min(pull, maxPull),
       duration: dragState.current.dragging ? 0.1 : 0.6,
       ease: "power3.out",
       overwrite: true,
