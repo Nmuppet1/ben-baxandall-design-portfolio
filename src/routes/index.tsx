@@ -208,18 +208,23 @@ function Index() {
 
         <WallSection side="center" wide>
           <Reveal>
-            <header className="mb-6 text-center">
+            <header className="mb-10 text-center">
+              <p className="mb-3 text-[0.6rem] tracking-[0.35em] text-warm uppercase">Selected work</p>
               <h2 className="text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
-              <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Spin to see a few of my projects, a description will appear below each.
+              <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Drag the ring to spin through my projects, then pull the grip below to climb into
+                the full story.
               </p>
             </header>
           </Reveal>
-          <ProjectGallery onSelect={setActive} />
-          <Reveal delay={0.1}>
-            <ProjectStory project={active} />
-          </Reveal>
+          <div className="flex flex-col items-center gap-10">
+            <ProjectGallery onSelect={setActive} />
+            <Reveal delay={0.1}>
+              <ProjectStory project={active} />
+            </Reveal>
+          </div>
         </WallSection>
+
 
         <WallSection side="right" wide>
           <Reveal>
@@ -304,7 +309,7 @@ function WallSection({
         : "ml-auto text-right";
 
   return (
-    <section className="relative z-20 flex min-h-screen w-full items-center px-6 pointer-events-none md:px-20">
+    <section className="relative z-20 flex min-h-screen w-full items-center px-6 py-24 pointer-events-none md:px-20">
       <div
         data-body
         className={`pointer-events-auto w-full ${wide ? "max-w-4xl" : "max-w-md"} ${align}`}

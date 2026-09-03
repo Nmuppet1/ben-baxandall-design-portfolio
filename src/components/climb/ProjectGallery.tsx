@@ -21,7 +21,7 @@ export const PROJECTS: Project[] = [
 ];
 
 const RADIUS = 280; // enough depth for the rear cards to remain visible around the cylinder
-const AUTO_SPEED = 4; // degrees per second while idle
+const AUTO_SPEED = 0; // idle auto-spin disabled so projects stay readable
 const DRAG_DEG_PER_PX = 0.25;
 const RESUME_DELAY_MS = 1200;
 // Cards all sit on one level ring — no vertical stagger.
@@ -95,11 +95,12 @@ export default function ProjectGallery({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Idle auto-spin — now also respects the externally-controlled pause
+  // Idle auto-spin is disabled — the ring only moves when the visitor drags it
   useEffect(() => {
+    if (AUTO_SPEED === 0 || autoSpinPaused) return;
     const tick = () => {
-      if (!drag.current.active && !autoSpinPaused && performance.now() >= resumeAt.current) {
-        rotation.current -= (AUTO_SPEED * (gsap.ticker.deltaRatio() * 1)) / 60;
+      if (!drag.current.active && performance.now() >= resumeAt.current) {
+        rotation.current -= (AUTO_SPEED * gsap.ticker.deltaRatio()) / 60;
         render();
       }
     };

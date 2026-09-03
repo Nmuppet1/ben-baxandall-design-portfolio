@@ -27,30 +27,59 @@ export default function BenName() {
     return () => ctx.revert();
   }, []);
 
-  const enter = (el: HTMLElement) => {
+  const setState = (el: HTMLElement, hovered: boolean) => {
     const img = el.querySelector(".ben-image");
     const glyph = el.querySelector(".ben-glyph");
-    gsap.to(glyph, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power2.out" });
-    gsap.to(img, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" });
-    gsap.to(el, { y: -14, duration: 0.5, ease: "power3.out" });
+    // overwrite kills any in-flight tween on the same target, so a fast
+    // enter/leave can never leave an image stuck visible
+    gsap.to(glyph, {
+      opacity: hovered ? 0 : 1,
+      scale: hovered ? 0.9 : 1,
+      duration: 0.35,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+    gsap.to(img, {
+      opacity: hovered ? 1 : 0,
+      scale: hovered ? 1 : 1.15,
+      duration: 0.45,
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+    gsap.to(el, {
+      y: hovered ? -14 : 0,
+      duration: hovered ? 0.5 : 0.6,
+      ease: hovered ? "power3.out" : "elastic.out(1, 0.6)",
+      overwrite: "auto",
+    });
   };
 
-  const leave = (el: HTMLElement) => {
-    const img = el.querySelector(".ben-image");
-    const glyph = el.querySelector(".ben-glyph");
-    gsap.to(img, { opacity: 0, scale: 1.15, duration: 0.4, ease: "power2.inOut" });
-    gsap.to(glyph, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
-    gsap.to(el, { y: 0, duration: 0.6, ease: "elastic.out(1, 0.6)" });
+  // Safety net: whatever happens (fast swipes, pointercancel, window blur),
+  // reset every letter when the pointer leaves the whole name.
+  const resetAll = () => {
+    rootRef.current?.querySelectorAll<HTMLElement>(".ben-letter").forEach((el) => setState(el, false));
   };
+
+  useLayoutEffect(() => {
+    window.addEventListener("blur", resetAll);
+    return () => window.removeEventListener("blur", resetAll);
+  }, []);
 
   return (
-    <div className="ben-name" ref={rootRef} aria-label="Ben">
+    <div
+      className="ben-name"
+      ref={rootRef}
+      aria-label="Ben"
+      onPointerLeave={resetAll}
+      onPointerCancel={resetAll}
+    >
       {LETTERS.map(({ char, image }) => (
         <span
           key={char}
           className="ben-letter"
-          onPointerEnter={(e) => enter(e.currentTarget)}
-          onPointerLeave={(e) => leave(e.currentTarget)}
+          onPointerEnter={(e) => setState(e.currentTarget, true)}
+          onPointerLeave={(e) => setState(e.currentTarget, false)}
+          onPointerCancel={(e) => setState(e.currentTarget, false)}
         >
           <span className="ben-glyph" aria-hidden>
             {char}
