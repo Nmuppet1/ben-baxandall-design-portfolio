@@ -291,6 +291,11 @@ function Index() {
         <span className="block h-px w-10 bg-warm/60" />
         <span className="text-warm">{Math.round(p * 100)}</span> %
       </div>
+
+      {/* desktop disclaimer */}
+      <div className="pointer-events-none fixed bottom-6 right-6 max-w-[10rem] text-right text-[0.6rem] leading-relaxed tracking-[0.2em] text-muted-foreground/60 uppercase">
+        Best on desktop — holds don&apos;t work on phones or iPads.
+      </div>
     </main>
   );
 }
@@ -317,10 +322,7 @@ function IntroSection() {
           className="mt-8 max-w-sm text-[0.65rem] leading-loose tracking-[0.3em] text-warm uppercase"
           style={{ animation: "breathe 3s ease-in-out infinite" }}
         >
-          There are no scrollbars here to give the sense of a real climb. Pull on the holds to scale the page.
-        </p>
-        <p className="max-w-sm text-[0.6rem] leading-loose tracking-[0.18em] text-muted-foreground/70 uppercase">
-          Best viewed on a laptop or desktop — the holds don&apos;t display well on a phone or iPad.
+          Pull on the holds to climb the page.
         </p>
       </div>
 
