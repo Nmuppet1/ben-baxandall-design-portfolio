@@ -97,8 +97,9 @@ export default function ProjectStory({ project }: { project: Project }) {
         </div>
 
         {!atTop && (
-          <span className="story-hint">drag the images up to read on</span>
+          <span className="story-hint">drag the images down to climb the story</span>
         )}
+
         <span className="story-progress" style={{ transform: `scaleX(${progress})` }} />
       </div>
     </div>

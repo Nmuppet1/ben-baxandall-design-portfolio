@@ -238,19 +238,27 @@ function Index() {
         <WallSection side="center" wide>
           <Reveal>
             <header className="mb-10 text-center">
-              <h2 className="text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Drag to spin through my projects. Scroll to reveal the details.
+              <span className="text-[0.6rem] tracking-[0.4em] text-warm uppercase">
+                Selected work
+              </span>
+              <h2 className="mt-3 text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
+              <span className="mx-auto mt-5 block h-px w-20 bg-warm/50" />
+              <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Spin the carousel to choose a project, then drag the photos downward to climb
+                through its story.
               </p>
             </header>
           </Reveal>
-          <div className="flex flex-col items-center gap-10">
+          <div className="flex flex-col items-center gap-8">
             <ProjectGallery onSelect={setActive} />
             <Reveal delay={0.1}>
-              <ProjectStory project={active} />
+              <div className="rounded-2xl border border-border/70 bg-card/30 p-2 shadow-[0_30px_60px_-30px_oklch(0_0_0/80%)] backdrop-blur-sm">
+                <ProjectStory project={active} />
+              </div>
             </Reveal>
           </div>
         </WallSection>
+
 
 
         <WallSection side="right" wide>
