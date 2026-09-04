@@ -322,10 +322,7 @@ function IntroSection() {
           className="mt-8 max-w-sm text-[0.65rem] leading-loose tracking-[0.3em] text-warm uppercase"
           style={{ animation: "breathe 3s ease-in-out infinite" }}
         >
-          There are no scrollbars here to give the sense of a real climb. Pull on the holds to scale the page.
-        </p>
-        <p className="max-w-sm text-[0.6rem] leading-loose tracking-[0.18em] text-muted-foreground/70 uppercase">
-          Best viewed on a laptop or desktop — the holds don&apos;t display well on a phone or iPad.
+          Pull on the holds to climb the page.
         </p>
       </div>
 
