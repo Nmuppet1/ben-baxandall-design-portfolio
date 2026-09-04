@@ -136,6 +136,32 @@ function Index() {
     grip.current = null;
   };
 
+  // A controlled "fall" back to the bottom: let go, accelerate down under
+  // gravity, then a small bounce as you land on the mat.
+  const fallToBottom = () => {
+    grip.current = null;
+    vel.current = 0;
+    const state = { v: climbRef.current };
+    gsap.killTweensOf(state);
+    const distance = climbRef.current;
+    if (distance < 4) return;
+    gsap
+      .timeline()
+      .to(state, {
+        v: distance * 0.08,
+        duration: Math.min(1.1, 0.35 + distance / 5000),
+        ease: "power2.in",
+        onUpdate: () => set(state.v),
+      })
+      .to(state, {
+        v: 0,
+        duration: 0.7,
+        ease: "bounce.out",
+        onUpdate: () => set(state.v),
+      });
+  };
+
+
   const maxClimb = Math.max(wallHeight - (typeof window !== "undefined" ? window.innerHeight : 800), 1);
   const p = climb / maxClimb;
 
@@ -148,11 +174,12 @@ function Index() {
     >
 
       <button
-        onClick={() => set(0)}
+        onClick={fallToBottom}
         className="fixed top-6 right-6 z-50 rounded-full border border-border px-5 py-2 text-xs tracking-widest text-muted-foreground transition hover:border-warm hover:text-warm"
       >
         ↓ GO TO BOTTOM
       </button>
+
 
       <Sunset t={p} />
 
