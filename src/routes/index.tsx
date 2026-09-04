@@ -319,7 +319,11 @@ function IntroSection() {
         >
           There are no scrollbars here to give the sense of a real climb. Pull on the holds to scale the page.
         </p>
+        <p className="max-w-sm text-[0.6rem] leading-loose tracking-[0.18em] text-muted-foreground/70 uppercase">
+          Best viewed on a laptop or desktop — the holds don&apos;t display well on a phone or iPad.
+        </p>
       </div>
+
     </div>
   );
 }
