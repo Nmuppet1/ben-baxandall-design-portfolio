@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { gsap } from "gsap";
+
 import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
 import { generateHolds, type Zone } from "@/components/climb/holds";
@@ -136,6 +138,32 @@ function Index() {
     grip.current = null;
   };
 
+  // A controlled "fall" back to the bottom: let go, accelerate down under
+  // gravity, then a small bounce as you land on the mat.
+  const fallToBottom = () => {
+    grip.current = null;
+    vel.current = 0;
+    const state = { v: climbRef.current };
+    gsap.killTweensOf(state);
+    const distance = climbRef.current;
+    if (distance < 4) return;
+    gsap
+      .timeline()
+      .to(state, {
+        v: distance * 0.08,
+        duration: Math.min(1.1, 0.35 + distance / 5000),
+        ease: "power2.in",
+        onUpdate: () => set(state.v),
+      })
+      .to(state, {
+        v: 0,
+        duration: 0.7,
+        ease: "bounce.out",
+        onUpdate: () => set(state.v),
+      });
+  };
+
+
   const maxClimb = Math.max(wallHeight - (typeof window !== "undefined" ? window.innerHeight : 800), 1);
   const p = climb / maxClimb;
 
@@ -148,11 +176,12 @@ function Index() {
     >
 
       <button
-        onClick={() => set(0)}
+        onClick={fallToBottom}
         className="fixed top-6 right-6 z-50 rounded-full border border-border px-5 py-2 text-xs tracking-widest text-muted-foreground transition hover:border-warm hover:text-warm"
       >
         ↓ GO TO BOTTOM
       </button>
+
 
       <Sunset t={p} />
 
@@ -209,19 +238,27 @@ function Index() {
         <WallSection side="center" wide>
           <Reveal>
             <header className="mb-10 text-center">
-              <h2 className="text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Drag to spin through my projects. Scroll to reveal the details.
+              <span className="text-[0.6rem] tracking-[0.4em] text-warm uppercase">
+                Selected work
+              </span>
+              <h2 className="mt-3 text-4xl font-light tracking-tight md:text-5xl">Projects</h2>
+              <span className="mx-auto mt-5 block h-px w-20 bg-warm/50" />
+              <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Spin the carousel to choose a project, then drag the photos downward to climb
+                through its story.
               </p>
             </header>
           </Reveal>
-          <div className="flex flex-col items-center gap-10">
+          <div className="flex flex-col items-center gap-8">
             <ProjectGallery onSelect={setActive} />
             <Reveal delay={0.1}>
-              <ProjectStory project={active} />
+              <div className="rounded-2xl border border-border/70 bg-card/30 p-2 shadow-[0_30px_60px_-30px_oklch(0_0_0/80%)] backdrop-blur-sm">
+                <ProjectStory project={active} />
+              </div>
             </Reveal>
           </div>
         </WallSection>
+
 
 
         <WallSection side="right" wide>
@@ -282,7 +319,11 @@ function IntroSection() {
         >
           There are no scrollbars here to give the sense of a real climb. Pull on the holds to scale the page.
         </p>
+        <p className="max-w-sm text-[0.6rem] leading-loose tracking-[0.18em] text-muted-foreground/70 uppercase">
+          Best viewed on a laptop or desktop — the holds don&apos;t display well on a phone or iPad.
+        </p>
       </div>
+
     </div>
   );
 }
