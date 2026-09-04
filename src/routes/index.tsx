@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { gsap } from "gsap";
+
 import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
 import { Sunset } from "@/components/climb/Sunset";
 import { generateHolds, type Zone } from "@/components/climb/holds";

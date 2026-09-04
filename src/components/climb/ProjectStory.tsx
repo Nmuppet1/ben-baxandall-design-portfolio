@@ -53,11 +53,14 @@ export default function ProjectStory({ project }: { project: Project }) {
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (!dragState.current.dragging) return;
-    const deltaY = dragState.current.startY - e.clientY; // dragging UP is positive
+    // Same feel as the climbing holds: haul DOWNWARD to travel upward
+    // through the story.
+    const deltaY = e.clientY - dragState.current.startY;
     if (Math.abs(deltaY) > 3) dragState.current.moved = true;
     const next = gsap.utils.clamp(0, maxPull, dragState.current.startPull + deltaY * FRICTION);
     setPull(next);
   };
+
 
   const onPointerUp = () => {
     dragState.current.dragging = false;
