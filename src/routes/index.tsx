@@ -11,7 +11,7 @@ import ProjectStory from "@/components/climb/ProjectStory";
 import BenName from "@/components/climb/BenName";
 import Reveal from "@/components/climb/Reveal";
 import InterestDoodle from "@/components/climb/InterestDoodles";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react";
 
 
 export const Route = createFileRoute("/")({
@@ -47,7 +47,6 @@ function Index() {
   const grip = useRef<{ y: number; start: number } | null>(null);
   const puffId = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
-  <Analytics />
 
   // Measure the wall's real height from its rendered content (intro +
   // all four sections) instead of a hardcoded constant, so it always
@@ -176,7 +175,7 @@ function Index() {
       onPointerCancel={release}
       className="relative h-screen w-full touch-none overflow-hidden bg-background text-foreground select-none"
     >
-
+      <Analytics />
       <button
         onClick={fallToBottom}
         className="fixed top-6 right-6 z-50 rounded-full border border-border px-5 py-2 text-xs tracking-widest text-muted-foreground transition hover:border-warm hover:text-warm"
