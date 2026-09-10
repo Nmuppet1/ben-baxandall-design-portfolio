@@ -11,6 +11,7 @@ import ProjectStory from "@/components/climb/ProjectStory";
 import BenName from "@/components/climb/BenName";
 import Reveal from "@/components/climb/Reveal";
 import InterestDoodle from "@/components/climb/InterestDoodles";
+import { Analytics } from "@vercel/analytics/next"
 
 
 export const Route = createFileRoute("/")({
@@ -46,6 +47,7 @@ function Index() {
   const grip = useRef<{ y: number; start: number } | null>(null);
   const puffId = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
+  <Analytics />
 
   // Measure the wall's real height from its rendered content (intro +
   // all four sections) instead of a hardcoded constant, so it always
