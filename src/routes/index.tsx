@@ -83,15 +83,11 @@ function Index() {
   }, [wallHeight]);
 
   // Round so a resize by a few px doesn't reshuffle every hold on screen
-  const holdsHeightKey = Math.round(wallHeight / 50) * 50;
-  const zonesKey = zones
-    .map((z) => [z.x0, z.x1, z.y0, z.y1].map((v) => Math.round(v * 100) / 100).join(","))
-    .join("|");
-  const holds = useMemo(
-    () => generateHolds(holdsHeightKey, zones),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [holdsHeightKey, zonesKey],
-  );
+  const holdLayout = useRef<ReturnType<typeof generateHolds>>([]);
+  if (holdLayout.current.length === 0 && wallHeight > 0 && zones.length > 0) {
+    holdLayout.current = generateHolds(Math.round(wallHeight / 50) * 50, zones);
+  }
+  const holds = holdLayout.current;
 
   // physics loop: momentum + friction + a little gravity sag
   useEffect(() => {
@@ -367,12 +363,12 @@ function InterestsSection() {
   const [drawnIndex, setDrawnIndex] = useState(0);
 
   useEffect(() => {
-    const timer = window.setInterval(
-      () => setDrawnIndex((current) => (current + 1) % interests.length),
+    const timer = window.setTimeout(
+      () => setDrawnIndex((drawnIndex + 1) % interests.length),
       4300,
     );
-    return () => window.clearInterval(timer);
-  }, [interests.length]);
+    return () => window.clearTimeout(timer);
+  }, [drawnIndex, interests.length]);
 
   const selectInterest = (index: number) => {
     setDrawnIndex(index);
