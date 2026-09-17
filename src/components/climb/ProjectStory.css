@@ -49,6 +49,32 @@
   letter-spacing: 0.02em;
 }
 
+.story-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 0.9rem;
+}
+
+.story-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid color-mix(in oklch, var(--warm) 45%, var(--border));
+  border-radius: 0.35rem;
+  color: var(--warm);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.story-links a:hover {
+  border-color: var(--warm);
+  background: color-mix(in oklch, var(--warm) 9%, transparent);
+}
+
 .story-description p {
   margin: 0;
   font-size: 0.9rem;

@@ -87,6 +87,16 @@ export default function ProjectStory({ project }: { project: Project }) {
               visible at rest — photos stack above it as you pull up */}
           <div className="story-card story-description">
             <h3>{project.title}</h3>
+            {project.links && project.links.length > 0 && (
+              <div className="story-links" aria-label={`${project.title} links`}>
+                {project.links.map((link) => (
+                  <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+                    {link.label}
+                    <span aria-hidden>↗</span>
+                  </a>
+                ))}
+              </div>
+            )}
             <p>{project.description}</p>
           </div>
           {project.images.map((src) => (

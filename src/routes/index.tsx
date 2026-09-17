@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 import { ChalkPuff, type Puff } from "@/components/climb/Chalk";
@@ -11,6 +11,7 @@ import ProjectStory from "@/components/climb/ProjectStory";
 import BenName from "@/components/climb/BenName";
 import Reveal from "@/components/climb/Reveal";
 import InterestDoodle from "@/components/climb/InterestDoodles";
+import MountainProgress from "@/components/climb/MountainProgress";
 import { Analytics } from "@vercel/analytics/react";
 
 
@@ -82,15 +83,11 @@ function Index() {
   }, [wallHeight]);
 
   // Round so a resize by a few px doesn't reshuffle every hold on screen
-  const holdsHeightKey = Math.round(wallHeight / 50) * 50;
-  const zonesKey = zones
-    .map((z) => [z.x0, z.x1, z.y0, z.y1].map((v) => Math.round(v * 100) / 100).join(","))
-    .join("|");
-  const holds = useMemo(
-    () => generateHolds(holdsHeightKey, zones),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [holdsHeightKey, zonesKey],
-  );
+  const holdLayout = useRef<ReturnType<typeof generateHolds>>([]);
+  if (holdLayout.current.length === 0 && wallHeight > 0 && zones.length > 0) {
+    holdLayout.current = generateHolds(Math.round(wallHeight / 50) * 50, zones);
+  }
+  const holds = holdLayout.current;
 
   // physics loop: momentum + friction + a little gravity sag
   useEffect(() => {
@@ -228,7 +225,9 @@ function Index() {
               filter: `drop-shadow(0 8px 16px oklch(0 0 0 / 70%))`,
               animation: `hold-sway ${5 + (h.id % 5)}s ease-in-out ${h.id * 0.13}s infinite`,
             }}
-          />
+          >
+            <span className="hold-bolt" aria-hidden />
+          </button>
         ))}
 
         {/* sections, in climb order: intro, Projects (centre stage),
@@ -287,11 +286,7 @@ function Index() {
         <SiteFooter />
       </div>
 
-      {/* height gauge */}
-      <div className="pointer-events-none fixed bottom-6 left-6 flex items-center gap-3 text-xs tracking-[0.3em] text-muted-foreground uppercase">
-        <span className="block h-px w-10 bg-warm/60" />
-        <span className="text-warm">{Math.round(p * 100)}</span> %
-      </div>
+      <MountainProgress progress={p} />
 
       {/* desktop disclaimer */}
       <div className="pointer-events-none fixed bottom-6 right-6 max-w-[10rem] text-right text-[0.6rem] leading-relaxed tracking-[0.2em] text-muted-foreground/60 uppercase">
@@ -365,7 +360,19 @@ function WallSection({
 function InterestsSection() {
   // Placeholder — swap these for your real interests
   const interests = ["Raspberry Pi", "3D Printing", "Animation", "Wild Swimming", "Football", "Running", "Cooking", "Guitar", "Reading"];
-  const [drawn, setDrawn] = useState<string | null>(null);
+  const [drawnIndex, setDrawnIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setDrawnIndex((drawnIndex + 1) % interests.length),
+      4300,
+    );
+    return () => window.clearTimeout(timer);
+  }, [drawnIndex, interests.length]);
+
+  const selectInterest = (index: number) => {
+    setDrawnIndex(index);
+  };
 
   return (
     <div>
@@ -377,16 +384,16 @@ function InterestsSection() {
         {interests.map((i) => (
           <li key={i} className="flex items-center gap-2">
             <button
-              onClick={() => setDrawn(i)}
+              onClick={() => selectInterest(interests.indexOf(i))}
               className={`rounded-full border px-3 py-1 text-xs transition ${
-                drawn === i
+                drawnIndex === interests.indexOf(i)
                   ? "border-warm text-warm"
                   : "border-border text-muted-foreground hover:border-warm hover:text-warm"
               }`}
             >
               {i}
             </button>
-            {drawn === i && <InterestDoodle key={i} name={i} />}
+            {drawnIndex === interests.indexOf(i) && <InterestDoodle key={`${i}-${drawnIndex}`} name={i} />}
           </li>
         ))}
       </ul>

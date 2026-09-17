@@ -32,12 +32,24 @@ const ZONE_PAD_Y = 40; // px kept clear above/below content
 
 const WALL_WIDTH_GUESS = 1200; // only used to turn x-fractions into px for spacing checks
 
+function seededRandom(seed: number) {
+  let value = seed >>> 0;
+  return () => {
+    value += 0x6d2b79f5;
+    let next = value;
+    next = Math.imul(next ^ (next >>> 15), next | 1);
+    next ^= next + Math.imul(next ^ (next >>> 7), next | 61);
+    return ((next ^ (next >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 /**
  * Scatters holds across the full width and height of the wall, skipping any
  * rectangle occupied by section content and never letting two holds overlap.
  */
 export function generateHolds(height: number, zones: Zone[] = []): Hold[] {
   if (height <= 0) return [];
+  const random = seededRandom(20260917);
   const target = Math.max(14, Math.floor(height / HOLD_SPACING));
   const placed: Hold[] = [];
 
@@ -66,9 +78,9 @@ export function generateHolds(height: number, zones: Zone[] = []): Hold[] {
 
   while (placed.length < target && attempts < maxAttempts) {
     attempts++;
-    const size = 32 + Math.random() * 22;
-    const x = 0.02 + Math.random() * 0.96;
-    const y = EDGE_MARGIN + Math.random() * Math.max(height - EDGE_MARGIN * 2, 1);
+    const size = 32 + random() * 22;
+    const x = 0.02 + random() * 0.96;
+    const y = EDGE_MARGIN + random() * Math.max(height - EDGE_MARGIN * 2, 1);
 
     if (collidesWithZone(x, y, size) || collidesWithHold(x, y)) continue;
 
@@ -77,9 +89,9 @@ export function generateHolds(height: number, zones: Zone[] = []): Hold[] {
       x,
       y,
       size,
-      rot: Math.random() * 36 - 18,
-      warm: Math.random() < 0.2,
-      clip: CLIP_SHAPES[Math.floor(Math.random() * CLIP_SHAPES.length)]!,
+      rot: random() * 36 - 18,
+      warm: random() < 0.2,
+      clip: CLIP_SHAPES[Math.floor(random() * CLIP_SHAPES.length)]!,
     });
   }
 
