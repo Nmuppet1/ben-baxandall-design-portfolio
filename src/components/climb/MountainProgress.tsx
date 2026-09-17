@@ -3,29 +3,15 @@ import { gsap } from "gsap";
 
 export default function MountainProgress({ progress }: { progress: number }) {
   const routeRef = useRef<SVGPathElement>(null);
-  const markerRef = useRef<SVGCircleElement>(null);
   const safeProgress = Math.min(1, Math.max(0, progress));
 
   useLayoutEffect(() => {
     const route = routeRef.current;
-    const marker = markerRef.current;
-    if (!route || !marker) return;
+    if (!route) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     gsap.to(route, {
       strokeDashoffset: 1 - safeProgress,
-      duration: reducedMotion ? 0 : 0.45,
-      ease: "power2.out",
-      overwrite: true,
-    });
-    gsap.to(marker, {
-      motionPath: {
-        path: route,
-        align: route,
-        alignOrigin: [0.5, 0.5],
-        start: safeProgress,
-        end: safeProgress,
-      },
       duration: reducedMotion ? 0 : 0.45,
       ease: "power2.out",
       overwrite: true,
@@ -61,7 +47,6 @@ export default function MountainProgress({ progress }: { progress: number }) {
           strokeDasharray="1"
           strokeDashoffset="1"
         />
-        <circle ref={markerRef} r="2.5" fill="var(--warm)" />
       </svg>
       <span className="mb-0.5 text-[0.65rem] tracking-[0.25em] text-warm">
         {Math.round(safeProgress * 100)}%
