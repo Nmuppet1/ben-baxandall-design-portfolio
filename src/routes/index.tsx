@@ -298,7 +298,7 @@ function Index() {
 
 function IntroSection() {
   return (
-    <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-8 px-6 text-center pointer-events-none">
+    <div className="relative z-20 flex h-screen shrink-0 flex-col items-center justify-center gap-8 px-6 text-center pointer-events-none">
       <div data-body className="pointer-events-auto flex flex-col items-center gap-6">
         <BenName />
         <p
@@ -346,7 +346,7 @@ function WallSection({
         : "ml-auto text-right";
 
   return (
-    <section className="relative z-20 flex min-h-screen w-full items-center px-6 py-24 pointer-events-none md:px-20">
+    <section className="relative z-20 flex h-screen w-full shrink-0 items-center px-6 py-16 pointer-events-none md:px-20">
       <div
         data-body
         className={`pointer-events-auto w-full ${wide ? "max-w-4xl" : "max-w-md"} ${align}`}
@@ -380,9 +380,9 @@ function InterestsSection() {
       <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
         A few things I spend my time on outside of design and engineering — they shape how I approach problem solving. Click on one to see its animation.
       </p>
-      <ul className="flex flex-wrap items-center gap-2">
+      <ul className="flex flex-nowrap items-center gap-2 whitespace-nowrap">
         {interests.map((i) => (
-          <li key={i} className="flex items-center gap-2">
+          <li key={i} className="relative flex shrink-0 items-center gap-2">
             <button
               onClick={() => selectInterest(interests.indexOf(i))}
               className={`rounded-full border px-3 py-1 text-xs transition ${

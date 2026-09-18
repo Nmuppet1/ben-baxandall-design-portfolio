@@ -55,14 +55,13 @@ export function Sunset({ t }: { t: number }) {
 
       {/* climbers on the summit */}
       <img
-        src="/climbers.svg"
+        src="/climberts.svg"
         alt=""
-        className="absolute h-[12vh] w-auto"
+        className="absolute h-[15vh] w-auto object-contain"
         style={{
-          left: "75%",
-          bottom: "70vh",
+          left: "79%",
+          bottom: "71.5vh",
           transform: "translateX(-50%)",
-          filter: "brightness(0)",
         }}
       />
     </div>
