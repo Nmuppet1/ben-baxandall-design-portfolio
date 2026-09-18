@@ -1,8 +1,10 @@
 # Roadmap
 
-- [ ] Auto-cycle interests and restart from a clicked selection
-- [ ] Stabilize hold placement and add bolt holes
-- [ ] Add summit climber silhouettes
-- [ ] Add GSAP mountain-route progress indicator
-- [ ] Add optional project link boxes
-- [ ] Verify interactions, visuals, and external links
+- [x] Auto-cycle interests and restart from a clicked selection
+- [x] Stabilize hold placement and add bolt holes
+- [x] Add summit climber silhouettes
+- [x] Add optional project link boxes
+- [x] Equalize section spacing
+- [x] Keep all interests on one line
+- [x] Replace the route line with GSAP-animated V0–V4 section grades
+- [ ] Verify section rhythm, summit placement, interests, and grade transitions
