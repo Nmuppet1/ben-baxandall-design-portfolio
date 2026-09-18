@@ -59,8 +59,8 @@ export function Sunset({ t }: { t: number }) {
         alt=""
         className="absolute h-[12vh] w-auto"
         style={{
-          left: "55%",
-          bottom: "58vh",
+          left: "75%",
+          bottom: "70vh",
           transform: "translateX(-50%)",
           filter: "brightness(0)",
         }}
