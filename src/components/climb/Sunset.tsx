@@ -57,10 +57,10 @@ export function Sunset({ t }: { t: number }) {
       <img
         src="/climberts.svg"
         alt=""
-        className="absolute h-[15vh] w-auto object-contain"
+        className="absolute h-[8vh] w-auto object-contain"
         style={{
-          left: "79%",
-          bottom: "71.5vh",
+          left: "68%",
+          bottom: "68vh",
           transform: "translateX(-50%)",
         }}
       />
