@@ -61,7 +61,6 @@ export default function ProjectStory({ project }: { project: Project }) {
     setPull(next);
   };
 
-
   const onPointerUp = () => {
     dragState.current.dragging = false;
   };
@@ -90,7 +89,13 @@ export default function ProjectStory({ project }: { project: Project }) {
             {project.links && project.links.length > 0 && (
               <div className="story-links" aria-label={`${project.title} links`}>
                 {project.links.map((link) => (
-                  <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    onPointerDown={(e) => e.stopPropagation()}
+                  >
                     {link.label}
                     <span aria-hidden>↗</span>
                   </a>
