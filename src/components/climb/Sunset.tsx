@@ -59,8 +59,8 @@ export function Sunset({ t }: { t: number }) {
         alt=""
         className="absolute h-[8vh] w-auto object-contain"
         style={{
-          left: "57%",
-          bottom: "64vh",
+          left: "63%",
+          bottom: "62vh",
           transform: "translateX(-50%)",
         }}
       />
