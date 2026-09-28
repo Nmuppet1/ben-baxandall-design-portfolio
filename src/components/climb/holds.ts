@@ -90,7 +90,7 @@ export function generateHolds(height: number, zones: Zone[] = []): Hold[] {
       y,
       size,
       rot: random() * 36 - 18,
-      warm: random() < 0.2,
+      warm: random() < 1.0,
       clip: CLIP_SHAPES[Math.floor(random() * CLIP_SHAPES.length)]!,
     });
   }
