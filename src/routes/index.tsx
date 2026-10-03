@@ -385,7 +385,7 @@ function InterestsSection() {
             <Button
               variant="ghost"
               onClick={() => selectInterest(interests.indexOf(i))}
-              className={`h-full min-h-9 w-full whitespace-normal rounded-md border px-1 py-1 text-[0.6rem] leading-snug transition md:text-xs ${
+              className={`h-full min-h-9 w-full whitespace-normal rounded-md border px-1 py-1 text-[0.6rem] leading-snug [overflow-wrap:anywhere] transition md:text-xs ${
                 drawnIndex === interests.indexOf(i)
                   ? "border-warm text-warm"
                   : "border-border text-muted-foreground hover:border-warm hover:text-warm"
