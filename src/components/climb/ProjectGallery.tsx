@@ -20,6 +20,7 @@ export const PROJECTS: Project[] = [
   { id: "p5", title: "Climbing Board", thumb: "/dt/d2.png", description: "With my love of climbing, I designed and branded a climbing board for my Design Technology coursework. Largely focused on iterative design, the project introduced me to a range of different design software for laser cutting, CNC routing and 3D printing. It also developed my drawing skills and user-centred design through stakeholder feedback. ", images: ["/dt/d1.png", "/dt/d3.png", "/dt/d4.JPEG", "/dt/d5.JPEG"], links: [{ label: "View project document", href: "https://drive.google.com/file/d/17MkN2vEo1450WFrtJ9EaW4l_kRvnq2Wm/view?usp=sharing" }] },
   { id: "p6", title: "Video Editing", thumb: "/vid/v2.png", description: "Over the past few years, I have thoroughly enjoyed expressing my creativity through video edits. It has been great to get hands-on experience with editing software and has allowed me to . I have also produced a few videos for the Dodgy Ballers, a University football club, where understanding the target audience was key and I learnt skills such as motion branding.", images: ["/vid/v4.png", "/vid/v1.png", "/vid/v3.png"], links: [{ label: "Watch video one", href: "https://drive.google.com/file/d/1kld3HMPdVEQ3JfG3PpjMPQ1Ax7Gr6KOM/view?usp=sharing" }, { label: "Watch video two", href: "https://drive.google.com/file/d/1SfAkyNCpHAfxqe7hMYdpkqai6NXT3etV/view?usp=sharing" }] },
   { id: "p7", title: "Design of an SMP", thumb: "/smp/s1.png", description: "Having been given a precise brief and instruction set for a simple microprocessor architecture, I carried out the design and implementation of the system using Vivado onto a Nexys 4 FPGA. I acheived top marks for this project and its report.", images: ["/smp/s2.png", "/smp/s3.png", "/smp/s4.png"], links: [{ label: "View project document", href: "https://drive.google.com/file/d/19MmNnDqfVV4INnp-FycgInun0lQ8NzoO/view?usp=sharing" }] },
+  { id: "p8", title: "New Project", thumb: "", description: "", images: [] },
 ];
 
 const RADIUS = 340; // enough depth for the rear cards to remain visible around the cylinder
@@ -45,6 +46,7 @@ export default function ProjectGallery({
   autoSpinPaused?: boolean;
 }) {
   const ringRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rotation = useRef(0); // degrees, grows/shrinks without limit
   const drag = useRef({ active: false, startX: 0, startRot: 0 });
@@ -79,21 +81,36 @@ export default function ProjectGallery({
     if (idx !== lastIndex.current) {
       lastIndex.current = idx;
       setActiveIndex(idx);
-      onSelect(PROJECTS[idx]!);
+       const project = PROJECTS[idx];
+       if (project) onSelect(project);
     }
   };
 
   useLayoutEffect(() => {
-    cardRefs.current.forEach((el, i) => {
-      if (el)
-        gsap.set(el, {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const layout = () => {
+      const width = stage.clientWidth;
+      const radius = Math.min(RADIUS, width * 0.32);
+      const size = Math.min(240, 2 * radius * Math.sin(Math.PI / n) * 0.88);
+      stage.style.setProperty("--carousel-card-size", `${size}px`);
+      cardRefs.current.forEach((el, i) => {
+        if (el) gsap.set(el, {
           rotationY: i * step,
-          z: RADIUS,
+          z: radius,
           y: 0,
-          transformOrigin: `50% 50% ${-RADIUS}px`,
+          transformOrigin: `50% 50% ${-radius}px`,
         });
-    });
-    render();
+      });
+      render();
+    };
+    layout();
+    const observer = new ResizeObserver(layout);
+    observer.observe(stage);
+    return () => {
+      observer.disconnect();
+      gsap.killTweensOf(rotation);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -163,6 +180,7 @@ export default function ProjectGallery({
     <div className="carousel">
       <div
         className="carousel-stage"
+        ref={stageRef}
         style={{ cursor: grabbing ? "grabbing" : "grab", touchAction: "none" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -182,7 +200,7 @@ export default function ProjectGallery({
                 }}
                 onClick={() => goTo(i)}
               >
-                <img src={project.thumb} alt={project.title} loading="lazy" />
+                {project.thumb ? <img src={project.thumb} alt={project.title} loading="lazy" /> : <span className="carousel-placeholder" aria-hidden>＋</span>}
                 <span className="carousel-card-title">{project.title}</span>
               </div>
             ))}

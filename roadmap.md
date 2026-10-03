@@ -8,3 +8,6 @@
 - [x] Keep all interests on one line
 - [x] Replace the route line with GSAP-animated V0–V4 section grades
 - [ ] Verify section rhythm, summit placement, interests, and grade transitions
+- [ ] Prevent section overlap at different screen sizes
+- [ ] Add GitHub and LinkedIn contact links
+- [ ] Add and evenly space an eighth project slot

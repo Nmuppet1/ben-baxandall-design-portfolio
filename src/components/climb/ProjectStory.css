@@ -1,6 +1,7 @@
 .project-story {
   position: relative;
-  width: min(92vw, 640px);
+  width: 100%;
+  max-width: 640px;
   margin: 0 auto;
   text-align: center;
 }
@@ -37,6 +38,7 @@
 }
 
 .story-description {
+  overflow-wrap: anywhere;
   text-align: left;
   border-radius: 0.9rem;
   background: color-mix(in oklch, var(--card) 80%, transparent);
