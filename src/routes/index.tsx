@@ -13,6 +13,7 @@ import Reveal from "@/components/climb/Reveal";
 import InterestDoodle from "@/components/climb/InterestDoodles";
 import MountainProgress from "@/components/climb/MountainProgress";
 import { Analytics } from "@vercel/analytics/react";
+import { Button } from "@/components/ui/button";
 
 
 export const Route = createFileRoute("/")({
@@ -251,7 +252,7 @@ function Index() {
           </Reveal>
           <div className="flex flex-col items-center gap-8">
             <ProjectGallery onSelect={setActive} />
-            <Reveal delay={0.1}>
+             <Reveal delay={0.1} className="w-full min-w-0">
                <ProjectStory project={active} />
             </Reveal>
           </div>
@@ -378,23 +379,26 @@ function InterestsSection() {
       <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
         A few things I spend my time on outside of design and engineering — they shape how I approach problem solving. Click on one to see its animation.
       </p>
-       <ul className="flex flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap py-6">
+       <ul className="grid grid-cols-9 items-stretch gap-1 py-6 md:gap-2">
         {interests.map((i) => (
-          <li key={i} className="relative flex shrink-0 items-center gap-2">
-            <button
+          <li key={i} className="min-w-0">
+            <Button
+              variant="ghost"
               onClick={() => selectInterest(interests.indexOf(i))}
-              className={`rounded-full border px-3 py-1 text-xs transition ${
+              className={`h-full min-h-9 w-full whitespace-normal rounded-md border px-1 py-1 text-[0.6rem] leading-snug transition md:text-xs ${
                 drawnIndex === interests.indexOf(i)
                   ? "border-warm text-warm"
                   : "border-border text-muted-foreground hover:border-warm hover:text-warm"
               }`}
             >
               {i}
-            </button>
-            {drawnIndex === interests.indexOf(i) && <InterestDoodle key={`${i}-${drawnIndex}`} name={i} />}
+            </Button>
           </li>
         ))}
       </ul>
+       <div className="flex h-40 items-center justify-start [&_.interest-doodle]:h-full [&_svg]:h-full [&_svg]:w-full">
+         <InterestDoodle key={drawnIndex} name={interests[drawnIndex] ?? "Reading"} />
+       </div>
     </div>
   );
 }

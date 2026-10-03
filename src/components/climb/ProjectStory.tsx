@@ -75,7 +75,7 @@ export default function ProjectStory({ project }: { project: Project }) {
         ref={viewportRef}
         role="button"
         tabIndex={0}
-        aria-label={`Drag upward to read more about ${project.title}`}
+        aria-label={`Drag downward to read more about ${project.title}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
