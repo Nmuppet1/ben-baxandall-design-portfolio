@@ -36,7 +36,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [active, setActive] = useState<Project>(PROJECTS[0]!);
+   const [active, setActive] = useState<Project>(() => PROJECTS[0] ?? { id: "empty", title: "Projects", thumb: "", description: "", images: [] });
   const [climb, setClimb] = useState(0);
   const [puffs, setPuffs] = useState<Puff[]>([]);
   const [wallHeight, setWallHeight] = useState(0);
@@ -252,9 +252,7 @@ function Index() {
           <div className="flex flex-col items-center gap-8">
             <ProjectGallery onSelect={setActive} />
             <Reveal delay={0.1}>
-              <div className="rounded-2xl border border-border/70 bg-card/30 p-2 shadow-[0_30px_60px_-30px_oklch(0_0_0/80%)] backdrop-blur-sm">
-                <ProjectStory project={active} />
-              </div>
+               <ProjectStory project={active} />
             </Reveal>
           </div>
         </WallSection>
@@ -298,7 +296,7 @@ function Index() {
 
 function IntroSection() {
   return (
-    <div className="relative z-20 flex h-screen shrink-0 flex-col items-center justify-center gap-8 px-6 text-center pointer-events-none">
+     <div className="relative z-20 flex min-h-svh shrink-0 flex-col items-center justify-center gap-8 px-6 py-20 text-center pointer-events-none">
       <div data-body className="pointer-events-auto flex flex-col items-center gap-6">
         <BenName />
         <p
@@ -346,7 +344,7 @@ function WallSection({
         : "ml-auto text-right";
 
   return (
-    <section className="relative z-20 flex h-screen w-full shrink-0 items-center px-6 py-16 pointer-events-none md:px-20">
+     <section className="relative z-20 flex min-h-svh w-full shrink-0 items-center overflow-x-clip px-6 py-20 pointer-events-none md:px-20">
       <div
         data-body
         className={`pointer-events-auto w-full ${wide ? "max-w-4xl" : "max-w-md"} ${align}`}
@@ -380,7 +378,7 @@ function InterestsSection() {
       <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
         A few things I spend my time on outside of design and engineering — they shape how I approach problem solving. Click on one to see its animation.
       </p>
-      <ul className="flex flex-nowrap items-center gap-2 whitespace-nowrap">
+       <ul className="flex flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap py-6">
         {interests.map((i) => (
           <li key={i} className="relative flex shrink-0 items-center gap-2">
             <button
@@ -419,11 +417,15 @@ function ContactSection() {
       <h2 className="text-3xl font-light">Contact</h2>
       <p className="text-sm text-muted-foreground">Feel free to reach out or just say hello!</p>
       <a
-        className="text-lg text-warm underline underline-offset-4"
+         className="block break-all text-lg text-warm underline underline-offset-4"
         href="mailto:benbaxandall@btinternet.com"
       >
         benbaxandall@btinternet.com
       </a>
+      <div className="flex flex-wrap justify-end gap-6">
+        <a href="https://github.com/Nmuppet1" target="_blank" rel="noopener noreferrer" className="text-sm text-warm underline underline-offset-4">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/ben-baxandall/" target="_blank" rel="noopener noreferrer" className="text-sm text-warm underline underline-offset-4">LinkedIn ↗</a>
+      </div>
     </div>
   );
 }

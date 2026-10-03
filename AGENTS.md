@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Climbing wall sections must size to their content with a viewport minimum, never a fixed viewport height, so project stories cannot spill into adjacent sections.
+- Size the project ring from its available container width and project count so additional cards retain consistent spacing across devices.
